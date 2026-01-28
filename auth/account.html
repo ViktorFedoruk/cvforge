@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <base href="/cvforge/">
   <title>Аккаунт</title>
-  <link rel="stylesheet" href="/css/auth.css">
-  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/header.css">
   <!-- Иконки -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -35,9 +35,9 @@
     </div>
 
 <script type="module">
-  import { deleteAccount, requireAuth } from '/js/auth.js';
-  import { initGlobalHeader } from "/js/header.js";
-  import { supabase } from "/js/supabase.js";
+  import { deleteAccount, requireAuth } from 'js/auth.js';
+  import { initGlobalHeader } from "js/header.js";
+  import { supabase } from "js/supabase.js";
 
   initGlobalHeader();
   await requireAuth();
@@ -61,7 +61,7 @@
   confirmDelete.onclick = async () => {
     try {
       await deleteAccount();
-      window.location.href = '/auth/index.html';
+      window.location.href = 'auth/index.html';
     } catch (err) {
       document.getElementById("error").textContent = err.message;
     }
@@ -70,7 +70,7 @@
   // Логаут
   document.getElementById('logoutBtn').onclick = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/auth/index.html';
+    window.location.href = 'auth/index.html';
   };
 </script>
 

@@ -5,13 +5,13 @@
   <base href="/cvforge/">
   <title>CVForge — Создай резюме за 5 минут</title>
 
-  <link rel="stylesheet" href="/css/header.css">
-  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/home.css">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script type="module">
-    import { initGlobalHeader } from "/js/header.js";
+    import { initGlobalHeader } from "js/header.js";
     initGlobalHeader();
   </script>
 </head>
@@ -113,10 +113,10 @@
     </div>
   </section>
 
-  <script type="module" src="/js/home-bg.js"></script>
+  <script type="module" src="js/home-bg.js"></script>
 
   <script type="module">
-    import { supabase } from "/js/supabase.js";
+    import { supabase } from "js/supabase.js";
 
     document.querySelectorAll("#startBtn2").forEach(btn => {
       btn.onclick = async () => {
@@ -124,9 +124,9 @@
         const user = data?.session?.user;
 
         if (user) {
-          window.location.href = "/dashboard.html";
+          window.location.href = "dashboard.html";
         } else {
-          window.location.href = "/auth/index.html";
+          window.location.href = "auth/index.html";
         }
       };
     });
