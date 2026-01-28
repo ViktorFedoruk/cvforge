@@ -19,6 +19,10 @@ jobs:
 
       - name: Rewrite absolute paths for GitHub Pages
         run: |
+          echo "=== BEFORE REWRITE ==="
+          grep -R '/js/' -n build || true
+          grep -R '/css/' -n build || true
+
           # HTML: CSS
           find build -type f -name "*.html" -exec sed -i 's|href=[\"\x27]/css/|href="/cvforge/css/|g' {} +
           find build -type f -name "*.html" -exec sed -i 's|src=[\"\x27]/css/|src="/cvforge/css/|g' {} +
@@ -32,6 +36,14 @@ jobs:
 
           # CSS url(/...) → url(/cvforge/...)
           find build -type f -name "*.css" -exec sed -i 's|url(/|url(/cvforge/|g' {} +
+
+          echo "=== AFTER REWRITE ==="
+          grep -R '/cvforge/js/' -n build || true
+          grep -R '/cvforge/css/' -n build || true
+
+      - name: Force unique commit (avoid GitHub Pages caching)
+        run: |
+          date +%s > build/.deploy-timestamp
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
