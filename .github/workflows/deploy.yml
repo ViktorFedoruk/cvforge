@@ -34,8 +34,17 @@ jobs:
           # JS module imports (универсальный паттерн)
           find build -type f -name "*.js" -exec sed -i 's|from [\"\x27]/js/|from "/cvforge/js/|g' {} +
 
-          # CSS url(/...) → url(/cvforge/...)
-          find build -type f -name "*.css" -exec sed -i 's|url(/|url(/cvforge/|g' {} +
+          # Переписываем ВСЕ абсолютные пути /js/... → /cvforge/js/...
+          find build -type f -name "*.html" -exec sed -i 's|/js/|/cvforge/js/|g' {} +
+          find build -type f -name "*.js"   -exec sed -i 's|/js/|/cvforge/js/|g' {} +
+
+          # Переписываем ВСЕ абсолютные пути /css/... → /cvforge/css/...
+          find build -type f -name "*.html" -exec sed -i 's|/css/|/cvforge/css/|g' {} +
+          find build -type f -name "*.css"  -exec sed -i 's|/css/|/cvforge/css/|g' {} +
+
+          # Переписываем url(/...) → url(/cvforge/...)
+          find build -type f -name "*.css"  -exec sed -i 's|url(/|url(/cvforge/|g' {} +
+
 
           echo "=== AFTER REWRITE ==="
           grep -R '/cvforge/js/' -n build || true
