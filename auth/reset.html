@@ -2,10 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <base href="/cvforge/">
   <title>Восстановление</title>
-  <link rel="stylesheet" href="css/auth.css">
-  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/header.css">
 </head>
 <body class="auth-page">
     <div id="globalHeaderMount"></div>
@@ -20,10 +19,10 @@
         <p id="error"></p>
         </div>
     </main>
-
+    
     <script type="module">
-    import { resetPassword } from 'js/auth.js';
-    import { initGlobalHeader } from "js/header.js";
+    import { resetPassword } from '/js/auth.js';
+    import { initGlobalHeader } from "/js/header.js";
     initGlobalHeader();
 
     document.getElementById('resetBtn').onclick = async () => {
