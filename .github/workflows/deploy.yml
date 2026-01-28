@@ -15,7 +15,7 @@ jobs:
       - name: Prepare build directory
         run: |
           mkdir build
-          cp -R . build/
+          rsync -av --exclude='build' --exclude='.github' ./ build/
 
       - name: Rewrite absolute paths for GitHub Pages
         run: |
@@ -25,7 +25,7 @@ jobs:
           find build -type f -name "*.html" -exec sed -i 's|src="/js/|src="/cvforge/js/|g' {} +
           find build -type f -name "*.html" -exec sed -i 's|src="/css/|src="/cvforge/css/|g' {} +
 
-          # JS module imports: import ... from "/js/..."
+          # JS module imports
           find build -type f -name "*.js" -exec sed -i 's|from "/js/|from "/cvforge/js/|g' {} +
 
           # CSS url(/...) → url(/cvforge/...)
