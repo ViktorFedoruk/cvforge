@@ -12,9 +12,28 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Deploy static site
+      - name: Prepare build directory
+        run: |
+          mkdir build
+          cp -R . build/
+
+      - name: Rewrite absolute paths for GitHub Pages
+        run: |
+          # HTML: href="/css/..." → href="/cvforge/css/..."
+          find build -type f -name "*.html" -exec sed -i 's|href="/css/|href="/cvforge/css/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|href="/js/|href="/cvforge/js/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|src="/js/|src="/cvforge/js/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|src="/css/|src="/cvforge/css/|g' {} +
+
+          # JS module imports: import ... from "/js/..."
+          find build -type f -name "*.js" -exec sed -i 's|from "/js/|from "/cvforge/js/|g' {} +
+
+          # CSS url(/...) → url(/cvforge/...)
+          find build -type f -name "*.css" -exec sed -i 's|url(/|url(/cvforge/|g' {} +
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: build
           publish_branch: gh-pages
