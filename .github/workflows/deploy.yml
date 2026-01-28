@@ -19,11 +19,13 @@ jobs:
 
       - name: Rewrite absolute paths for GitHub Pages
         run: |
-          # HTML: href="/css/..." → href="/cvforge/css/..."
+          # HTML: CSS
           find build -type f -name "*.html" -exec sed -i 's|href="/css/|href="/cvforge/css/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|src="/css/|src="/cvforge/css/|g' {} +
+
+          # HTML: JS
           find build -type f -name "*.html" -exec sed -i 's|href="/js/|href="/cvforge/js/|g' {} +
           find build -type f -name "*.html" -exec sed -i 's|src="/js/|src="/cvforge/js/|g' {} +
-          find build -type f -name "*.html" -exec sed -i 's|src="/css/|src="/cvforge/css/|g' {} +
 
           # JS module imports
           find build -type f -name "*.js" -exec sed -i 's|from "/js/|from "/cvforge/js/|g' {} +
