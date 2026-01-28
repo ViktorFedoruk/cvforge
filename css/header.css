@@ -1,0 +1,161 @@
+/* =========================================================
+   GLOBAL HEADER — Neutral Tinted Ice Glass
+========================================================= */
+
+.global-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  z-index: 9999;
+
+  /* нейтральное притонированное стекло */
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+  /* лёгкая холодная нейтральная линия */
+  border-bottom: 1px solid rgba(200, 200, 200, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-sizing: border-box;
+
+  /* мягкая глубина */
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================================
+   LOGO — нейтральный, современный
+========================================================= */
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: rgba(40, 40, 40, 0.92);
+  text-decoration: none;
+
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* нейтральная стеклянная кнопка */
+.header-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(200, 200, 200, 0.55);
+
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  color: rgba(40, 40, 40, 0.85);
+  font-weight: 600;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   AVATAR — нейтральная стеклянная капля
+========================================================= */
+
+.header-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(200, 200, 200, 0.55);
+
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+
+  transition: 0.25s ease;
+}
+
+.header-avatar:hover {
+  background: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.header-avatar i {
+  font-size: 18px;
+  color: rgba(40, 40, 40, 0.75);
+}
+
+/* =========================================================
+   PROFILE MENU — нейтральное стекло
+========================================================= */
+
+.profile-menu {
+  position: absolute;
+  top: 70px;
+  right: 2rem;
+
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(200, 200, 200, 0.45);
+
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+
+  width: 180px;
+  padding: 0.5rem 0;
+  display: none;
+  z-index: 99999;
+}
+
+.profile-menu.active {
+  display: block;
+}
+
+.profile-menu-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: rgba(40, 40, 40, 0.85);
+  transition: background 0.15s ease;
+}
+
+.profile-menu-item:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.profile-menu-item.logout {
+  color: #d33;
+}

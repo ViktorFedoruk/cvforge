@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <!-- Иконки -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="auth-page">
+  <div id="globalHeaderMount"></div>
+
+  <main class="auth-wrapper">
+    <div class="auth-container">
+      <h2>Вход</h2>
+
+      <!-- Email -->
+      <input id="email" type="email" placeholder="Email">
+      <p id="email_error" class="input-error-text"></p>
+
+      <!-- Пароль с глазком -->
+      <div class="password-wrapper">
+        <input id="password" type="password" placeholder="Пароль">
+        <span class="toggle-password" id="togglePassword">
+          <i class="fas fa-eye"></i>
+        </span>
+      </div>
+      <p id="password_error" class="input-error-text"></p>
+
+      <button id="loginBtn">Войти</button>
+
+      <a href="register.html">Создать аккаунт</a>
+      <a href="reset.html">Забыли пароль?</a>
+
+      <p id="error"></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { login, initPasswordToggle } from '/js/auth.js';
+    import { initGlobalHeader } from "/js/header.js";
+
+    initGlobalHeader();
+    initPasswordToggle("password", "togglePassword");
+
+    document.getElementById('loginBtn').onclick = async () => {
+      const emailValue = document.getElementById("email").value;
+      const passwordValue = document.getElementById("password").value;
+
+      try {
+        await login(emailValue, passwordValue);
+        window.location.href = '/dashboard.html';
+      } catch (err) {
+        document.getElementById("error").textContent = err.message;
+      }
+    };
+  </script>
+
+</body>
+</html>

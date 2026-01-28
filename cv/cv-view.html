@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Просмотр резюме</title>
+
+  <link rel="stylesheet" href="./cv-view.css">
+  <link rel="stylesheet" href="/css/header.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div id="globalHeaderMount"></div>
+
+  <div class="cv-view-wrapper">
+
+    <header id="cvTopbar" class="cv-topbar">
+      <!-- JS вставит кнопки -->
+    </header>
+
+    <main class="cv-view-body">
+      <div id="cvContent" class="cv-content">
+        <!-- JS вставит HTML резюме -->
+      </div>
+    </main>
+
+  </div>
+
+  <script type="module" src="./cv-view.js"></script>
+  <script type="module">
+    import { initGlobalHeader } from "/js/header.js";
+    initGlobalHeader();
+  </script>
+</body>
+</html>

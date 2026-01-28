@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Восстановление</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/header.css">
+</head>
+<body class="auth-page">
+    <div id="globalHeaderMount"></div>
+
+    <main class="auth-wrapper"></main>
+        <div class="auth-container">
+        <h2>Восстановление пароля</h2>
+
+        <input id="email" type="email" placeholder="Email">
+        <button id="resetBtn">Отправить ссылку</button>
+
+        <p id="error"></p>
+        </div>
+    </main>
+    
+    <script type="module">
+    import { resetPassword } from '/js/auth.js';
+    import { initGlobalHeader } from "/js/header.js";
+    initGlobalHeader();
+
+    document.getElementById('resetBtn').onclick = async () => {
+        try {
+        await resetPassword(email.value);
+        error.textContent = 'Письмо отправлено (если email существует)';
+        } catch (err) {
+        error.textContent = err.message;
+        }
+    };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/header.css">
+</head>
+
+<body class="auth-page">
+  <div id="globalHeaderMount"></div>
+
+    <main class="auth-wrapper"></main>
+        <div class="auth-container">
+            <h2>Регистрация</h2>
+
+            <input id="firstName" type="text" placeholder="Имя">
+            <input id="lastName" type="text" placeholder="Фамилия">
+
+            <input id="email" type="email" placeholder="Email">
+            <input id="password" type="password" placeholder="Пароль">
+
+            <button id="registerBtn">Создать аккаунт</button>
+
+            <a href="/auth/index.html">Уже есть аккаунт</a>
+
+            <p id="error"></p>
+        </div>
+    </main>
+    
+  <script type="module">
+    import { register } from '/js/auth.js';
+    import { initGlobalHeader } from "/js/header.js";
+
+    initGlobalHeader();
+
+    document.getElementById('registerBtn').onclick = async () => {
+      try {
+        await register(
+          email.value,
+          password.value,
+          firstName.value,
+          lastName.value
+        );
+
+        window.location.href = '/dashboard.html';
+      } catch (err) {
+        error.textContent = err.message;
+      }
+    };
+  </script>
+
+</body>
+</html>

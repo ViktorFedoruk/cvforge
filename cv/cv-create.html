@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Создание резюме</title>
+  <link rel="stylesheet" href="/css/cv-create.css" />
+  <!-- FontAwesome Free -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="wizard-wrapper">
+
+  <!-- HEADER -->
+  <header class="wizard-header">
+    <div class="wizard-header-left">
+      <h1>Создание резюме</h1>
+      <p>Пройди 4 шага — и получишь аккуратное, структурированное резюме.</p>
+    </div>
+
+    <div class="wizard-progress">
+      <div class="wizard-progress-info">
+        <span id="wizardStepLabel">Шаг 1 из 4 — Профиль</span>
+        <span id="wizardStepPercent">0%</span>
+      </div>
+      <div class="wizard-progress-bar">
+        <div id="wizardProgressFill"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- STEPS NAV -->
+  <div class="wizard-steps">
+    <div class="wizard-step" data-step="1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Профиль</div>
+    </div>
+    <div class="wizard-step" data-step="2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Опыт</div>
+    </div>
+    <div class="wizard-step" data-step="3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Навыки</div>
+    </div>
+    <div class="wizard-step" data-step="4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Образование</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="wizard-content">
+
+    <!-- STEP 1 -->
+    <section id="step1" class="wizard-panel active">
+    <h2>Профиль и контакты</h2>
+    <p class="wizard-hint">Это первое, что увидит рекрутер — сделай его аккуратным.</p>
+
+    <!-- AVATAR BLOCK -->
+    <div class="avatar-block">
+        <div class="avatar-preview">
+            <div id="avatar_preview" class="avatar-preview-circle">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+
+        <div class="avatar-actions">
+            <button id="avatar_upload_btn" type="button" class="btn-secondary">Загрузить фото</button>
+
+            <button id="avatar_change_btn" type="button" class="btn-secondary hidden">Изменить фото</button>
+            <button id="avatar_delete_btn" type="button" class="btn-secondary hidden">Удалить</button>
+
+            <input id="avatar_file" type="file" accept="image/*" hidden />
+            <div id="avatar_error" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- MAIN PROFILE FIELDS -->
+    <div class="form-grid">
+
+        <!-- TITLE -->
+        <div class="form-field">
+        <label>Название резюме <span class="required">*</span></label>
+        <input id="cvTitle" placeholder="Например: QA Engineer / Middle" />
+        <div class="error-msg"></div>
+        </div>
+
+        <!-- FULL NAME -->
+        <div class="form-field">
+        <label>Полное имя <span class="required">*</span></label>
+        <input id="profileFullName" placeholder="Имя и фамилия" />
+        <div class="error-msg"></div>
+        </div>
+
+        <!-- POSITION -->
+        <div class="form-field">
+            <label>Желаемая позиция <span class="required">*</span></label>
+
+            <div class="position-input-wrapper">
+                <input id="profilePosition" placeholder="Например: QA Engineer" />
+                <div id="positionSuggestions"></div>
+            </div>
+
+            <div class="error-msg"></div>
+        </div>
+
+        <!-- LOCATION WITH AUTOCOMPLETE -->
+        <div class="form-field location-field">
+            <label>Город / Локация</label>
+            <div class="city-input-wrapper">
+                <input id="profileLocation" placeholder="Город, страна" autocomplete="off" />
+                <div class="city-dropdown-container"></div>
+            </div>
+            <div class="error-msg"></div>
+        </div>
+
+        <!-- CONTACTS -->
+        <div class="form-field">
+            <label>Email</label>
+            <input id="profileEmail" type="email" placeholder="you@example.com" />
+            <div class="error-msg"></div>
+            </div>
+
+            <div class="form-field">
+            <label>Телефон</label>
+            <input id="profilePhone" placeholder="+375 ..." />
+            <div class="error-msg"></div>
+            </div>
+
+            <div class="form-field">
+            <label>LinkedIn</label>
+            <input id="profileLinkedin" placeholder="https://linkedin.com/in/..." />
+            <div class="error-msg"></div>
+            </div>
+
+            <!-- ADDED CONTACT FIELDS (теперь часть сетки) -->
+            <div id="extraContactsList"></div>
+
+            <!-- BUTTON TO ADD EXTRA CONTACTS (тоже часть сетки) -->
+            <div class="form-field extra-contacts-toggle">
+            <button id="addExtraContactBtn" type="button" class="btn-secondary">
+                + Добавить контакт
+            </button>
+
+            <!-- DROPDOWN -->
+            <div id="extraContactDropdown" class="extra-contact-dropdown hidden">
+                <div data-type="telegram">Telegram</div>
+                <div data-type="github">GitHub</div>
+                <div data-type="website">Website</div>
+                <div data-type="twitter">Twitter / X</div>
+                <div data-type="instagram">Instagram</div>
+                <div data-type="facebook">Facebook</div>
+                <div data-type="behance">Behance</div>
+                <div data-type="dribbble">Dribbble</div>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="form-field full">
+        <label>Краткое описание</label>
+        <textarea id="profileSummary" rows="3" placeholder="2–3 предложения о твоём опыте."></textarea>
+        <div class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- ADVANTAGES -->
+    <div class="tags-block">
+        <div class="tags-header">
+        <h3>Преимущества (тэги)</h3>
+        <p>Добавь 3–7 тэгов, которые лучше всего описывают твои сильные стороны.</p>
+        </div>
+
+        <div id="advantagesList" class="tags-list"></div>
+
+        <div class="tags-input-row">
+        <input id="advantageInput" placeholder="Например: Внимательность к деталям" />
+        <button id="addAdvantageBtn" class="btn-secondary">Добавить</button>
+        </div>
+
+        <div id="advantagesSuggestions" class="tags-suggestions"></div>
+    </div>
+    </section>
+
+    <!-- AVATAR CROP MODAL -->
+    <div id="avatarCropModal" class="avatar-modal">
+    <div class="avatar-modal-content">
+        <div class="avatar-crop-area" id="avatarCropArea"></div>
+
+        <div class="avatar-crop-controls">
+        <label>Масштаб</label>
+        <input id="avatarZoom" type="range" min="0.2" max="5" step="0.01" value="1" />
+        </div>
+
+        <div class="avatar-modal-actions">
+        <button id="avatarCancel" class="btn-secondary">Отмена</button>
+        <button id="avatarApply" class="btn-primary">Применить</button>
+        </div>
+    </div>
+    </div>
+
+
+    <!-- STEP 2 -->
+    <section id="step2" class="wizard-panel">
+      <h2>Опыт работы</h2>
+      <p class="wizard-hint">Укажи ключевые места работы. Лучше 2–5, но с понятными результатами.</p>
+
+      <div id="experienceList" class="cards-list"></div>
+
+      <button id="addExperienceBtn" class="btn-secondary mt-16">Добавить место работы</button>
+
+      <template id="experienceTemplate">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Новое место работы</span>
+            <button class="icon-btn card-delete-btn">✕</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Компания<span class="required">*</span></label>
+              <input data-field="company" placeholder="Название компании" />
+            </div>
+
+            <!-- LOCATION WITH AUTOCOMPLETE -->
+            <div class="form-field">
+                <label>Город/Локация</label>
+                <div class="city-input-wrapper">
+                    <input data-field="city" class="edu-city" placeholder="Город, Страна" autocomplete="off" />
+                    <div class="city-dropdown-container"></div>
+                </div>
+            </div>
+
+            <div class="form-field">
+              <label>Должность<span class="required">*</span></label>
+              <input data-field="position" placeholder="Например: QA Engineer" />
+            </div>
+
+            <div class="form-field" data-field="start_date">
+                <label>Дата начала<span class="required">*</span></label>
+                <input data-field="start_date" type="date" />
+            </div>
+
+            <div class="form-field" data-field="end_date">
+                <label>Дата окончания<span class="required">*</span></label>
+                <input data-field="end_date" type="date" />
+
+                <label class="checkbox checkbox-inline">
+                    <input type="checkbox" data-field="current" />
+                    <span>Работаю здесь сейчас</span>
+                </label>
+            </div>
+
+            <div class="form-field full">
+              <label>Описание / обязанности</label>
+              <textarea data-field="description" rows="3" placeholder="Кратко опиши, чем занимался."></textarea>
+            </div>
+          </div>
+        </div>
+      </template>
+    </section>
+
+    <!-- STEP 3 -->
+    <section id="step3" class="wizard-panel">
+        <h2>Навыки</h2>
+        <p class="wizard-hint">Разнеси навыки по уровню владения.</p>
+
+        <div class="skills-columns">
+
+            <div class="skills-column" data-level="expert">
+            <h3>Эксперт</h3>
+            <div class="skills-list" id="skillsExpert"></div>
+            </div>
+
+            <div class="skills-column" data-level="used">
+            <h3>Опытный</h3>
+            <div class="skills-list" id="skillsUsed"></div>
+            </div>
+
+            <div class="skills-column" data-level="familiar">
+            <h3>Знаком</h3>
+            <div class="skills-list" id="skillsFamiliar"></div>
+            </div>
+
+        </div>
+
+        <div class="skill-add-row">
+            <input id="skillNameInput" placeholder="Например: Postman" />
+            <button id="addSkillBtn" class="btn-secondary">Добавить</button>
+        </div>
+
+        <div id="skillsSuggestions" class="tags-suggestions"></div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section id="step4" class="wizard-panel">
+        <h2>Образование и курсы</h2>
+        <p class="wizard-hint">Укажи базовое образование и важные курсы.</p>
+
+        <div id="educationList" class="cards-list"></div>
+
+        <button id="addEducationBtn" class="btn-secondary mt-16">
+            Добавить образование / курс
+        </button>
+
+        <template id="educationTemplate">
+            <div class="card">
+            <div class="card-header">
+                <span class="card-title">Новая запись</span>
+                <button class="icon-btn card-delete-btn">✕</button>
+            </div>
+
+            <div class="form-grid">
+
+                <!-- Institution -->
+                <div class="form-field">
+                <label>Учебное заведение / курс</label>
+                <input
+                    data-field="institution"
+                    class="institution-input"
+                    placeholder="Название университета или курса"
+                    autocomplete="off"
+                />
+                <div class="university-dropdown-container"></div>
+                </div>
+
+                <!-- City -->
+                <div class="form-field">
+                <label>Город/Локация</label>
+                <input
+                    data-field="city"
+                    class="edu-city"
+                    placeholder="Город, Страна"
+                    autocomplete="off"
+                />
+                <div class="city-dropdown-container"></div>
+                </div>
+
+                <!-- Degree -->
+                <div class="form-field">
+                <label>Степень / программа</label>
+                <input
+                    data-field="degree"
+                    placeholder="Например: Бакалавр, Курс по тестированию"
+                />
+                </div>
+
+                <!-- Start date -->
+                <div class="form-field" data-field="start_date">
+                <label>Дата начала</label>
+                <input data-field="start_date" type="date" />
+                </div>
+
+                <!-- End date -->
+                <div class="form-field" data-field="end_date">
+                <label>Дата окончания</label>
+                <input data-field="end_date" type="date" />
+                </div>
+
+                <!-- Certificate -->
+                <div class="form-field full">
+                <label>Ссылка на сертификат</label>
+                <input data-field="certificate_url" placeholder="https://..." />
+                </div>
+
+                <!-- Description -->
+                <div class="form-field full">
+                <label>Описание</label>
+                <textarea
+                    data-field="description"
+                    rows="2"
+                    placeholder="Кратко опиши, что это за обучение."
+                ></textarea>
+                </div>
+
+            </div>
+            </div>
+        </template>
+        </section>
+
+    <!-- SUCCESS SCREEN -->
+    <section id="stepSuccess" class="wizard-panel success-panel">
+      <div class="success-icon">🎉</div>
+      <h2>Резюме успешно создано!</h2>
+      <p>Теперь ты можешь просмотреть его или вернуться к списку.</p>
+
+      <div class="success-actions">
+        <a id="successViewBtn" class="btn-primary">Просмотреть резюме</a>
+        <a href="/dashboard.html" class="btn-secondary">Вернуться к списку</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="wizard-footer">
+    <div id="wizardStatus" class="wizard-status"></div>
+    <div class="wizard-buttons">
+      <button id="prevStepBtn" class="btn-secondary" disabled>Назад</button>
+      <button id="nextStepBtn" class="btn-primary">Далее</button>
+      <button id="finishBtn" class="btn-primary hidden">Завершить</button>
+    </div>
+  </footer>
+
+</div>
+
+<div id="glassDatepicker" class="glass-datepicker hidden">
+  <div class="gdp-header">
+    <button class="gdp-prev">‹</button>
+
+    <div class="gdp-selectors">
+      <div class="gdp-dropdown">
+        <button class="gdp-btn gdp-month-btn">Месяц</button>
+        <div class="gdp-menu gdp-month-menu hidden"></div>
+      </div>
+
+      <div class="gdp-dropdown">
+        <button class="gdp-btn gdp-year-btn">Год</button>
+        <div class="gdp-menu gdp-year-menu hidden"></div>
+      </div>
+    </div>
+
+    <button class="gdp-next">›</button>
+  </div>
+
+  <div class="gdp-weekdays"></div>
+  <div class="gdp-days"></div>
+</div>
+
+<script src="https://unpkg.com/imask"></script>
+<script type="module" src="/js/cv-create.js"></script>
+</body>
+</html>

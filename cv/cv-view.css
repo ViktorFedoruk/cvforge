@@ -1,0 +1,810 @@
+/* =========================================================
+   ROOT VARIABLES — Hybrid Premium
+========================================================= */
+:root {
+  --page-width: 900px;
+  --bg-page: #eef2f7;
+  --bg-card: rgba(255, 255, 255, 0.78);
+  --bg-glass-strong: rgba(255, 255, 255, 0.55);
+
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --text-strong: #1f2937;
+
+  --primary: #2563eb;
+  --primary-2: #4f46e5;
+
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+  --shadow-deep: 0 28px 60px rgba(15, 23, 42, 0.12);
+
+  --transition: all 0.25s ease;
+}
+
+/* =========================================================
+   PAGE BACKGROUND
+========================================================= */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #e8ecf7, #f4f7fc);
+  background-size: 200% 200%;
+  animation: bgShift 18s ease infinite;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+@keyframes bgShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* =========================================================
+   FIXED DOCUMENT WRAPPER
+========================================================= */
+.cv-root {
+  width: var(--page-width);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-xl);
+  padding: 60px 70px;
+  box-shadow: var(--shadow-deep);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+/* =========================================================
+   CV VIEW TOPBAR — GLASS PREMIUM
+========================================================= */
+
+.cv-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+
+  padding: 18px 26px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+  margin-bottom: 32px;
+
+  /* убираем сдвиг при скролле */
+  position: sticky;
+  top: 70px;
+  z-index: 10;
+}
+
+/* ЛЕВАЯ / ЦЕНТРАЛЬНАЯ / ПРАВАЯ ЗОНЫ */
+.cv-topbar-left,
+.cv-topbar-center,
+.cv-topbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.cv-topbar-center {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Заголовок */
+.cv-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-strong);
+  margin: 0;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Базовая кнопка */
+.topbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+}
+
+/* Акцентная кнопка */
+.topbar-btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  border: none;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+}
+
+.topbar-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.45);
+}
+
+/* =========================================================
+   BLOCK TITLES — EDITORIAL LUXE STYLE
+========================================================= */
+
+.cv-block {
+  margin-bottom: 60px;
+}
+
+.cv-block-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--text-strong);
+
+  margin-bottom: 34px;
+  position: relative;
+
+  padding-bottom: 14px;
+}
+
+/* Элегантная линия под заголовком */
+.cv-block-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 120px;
+  height: 4px;
+  border-radius: 4px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.9),
+    rgba(59, 130, 246, 0.9)
+  );
+
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* Лёгкая тень под текстом — создаёт глубину */
+.cv-block-title {
+  text-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* =========================================================
+   PROFILE BLOCK — PREMIUM GLASS HEADER
+========================================================= */
+
+.cv-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 60px;
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  border-radius: 28px;
+  padding: 32px 36px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+}
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.cv-profile-avatar {
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.6);
+  border: 4px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+
+  flex-shrink: 0;
+}
+
+.cv-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cv-profile-avatar-placeholder {
+  font-size: 70px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* =========================================================
+   TEXT BLOCK
+========================================================= */
+
+.cv-profile-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cv-profile-name {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  color: var(--text-strong);
+}
+
+.cv-profile-position {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: -4px;
+}
+
+.cv-profile-summary {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 650px;
+  margin-top: 4px;
+}
+
+/* =========================================================
+   CONTACTS
+========================================================= */
+
+.cv-profile-contacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  margin-top: 10px;
+}
+
+.cv-profile-contacts div {
+  font-size: 15px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+/* =========================================================
+   ADVANTAGES (soft tags)
+========================================================= */
+
+.cv-profile-advantages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cv-adv-tag {
+  padding: 8px 16px;
+  border-radius: 999px;
+
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #4338ca;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  backdrop-filter: blur(6px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+
+  transition: all 0.2s ease;
+}
+
+.cv-adv-tag:hover {
+  background: rgba(99, 102, 241, 0.18);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   EXPERIENCE — PREMIUM GLASS CARDS
+========================================================= */
+
+.cv-exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Карточка опыта */
+.cv-exp-item {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+
+  padding: 26px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  transition: all 0.25s ease;
+}
+
+/* Hover эффект — лёгкий подъём */
+.cv-exp-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* Заголовок компании + должность */
+.cv-exp-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cv-exp-company {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-strong);
+  letter-spacing: -0.3px;
+}
+
+.cv-exp-position {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Город */
+.cv-exp-meta {
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Даты */
+.cv-exp-dates {
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cv-exp-duration {
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* Описание */
+.cv-exp-description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #374151;
+  margin-top: 4px;
+}
+
+/* Общий опыт — аккуратный премиальный бейдж под заголовком */
+.cv-exp-total {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+
+  margin-bottom: 22px;
+}
+
+/* маленькая точка‑маркер слева (опционально, но очень аккуратно) */
+.cv-exp-total::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #3b82f6;
+}
+
+/* =========================================================
+   SKILLS — PREMIUM COLORED TAGS
+========================================================= */
+
+.cv-skill-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+/* Колонка уровня */
+.cv-skill-col {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 22px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Заголовок уровня */
+.cv-skill-col h3 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-strong);
+  letter-spacing: -0.3px;
+
+  position: relative;
+  padding-bottom: 8px;
+}
+
+/* ===== Линии под заголовками (цвет по уровню) ===== */
+
+/* Эксперт — фиолетовый */
+.cv-skill-col:nth-child(1) h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+
+  background: rgba(99, 102, 241, 0.8);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.25);
+}
+
+/* Опытный — синий */
+.cv-skill-col:nth-child(2) h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+
+  background: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
+}
+
+/* Знаком — серо‑голубой */
+.cv-skill-col:nth-child(3) h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+
+  background: rgba(148, 163, 184, 0.8);
+  box-shadow: 0 3px 8px rgba(148, 163, 184, 0.25);
+}
+
+/* Контейнер тегов */
+.cv-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Базовый стиль тега */
+.cv-skill-item {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 7px 14px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+
+  white-space: nowrap;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+/* Hover эффект */
+.cv-skill-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* =========================================================
+   COLOR CODING BY LEVEL
+========================================================= */
+
+/* Эксперт — мягкий фиолетовый */
+.cv-skill-col:nth-child(1) .cv-skill-item {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #4338ca;
+}
+
+.cv-skill-col:nth-child(1) .cv-skill-item:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+/* Опытный — спокойный синий */
+.cv-skill-col:nth-child(2) .cv-skill-item {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+.cv-skill-col:nth-child(2) .cv-skill-item:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+/* Знаком — нейтральный серо‑голубой */
+.cv-skill-col:nth-child(3) .cv-skill-item {
+  background: rgba(148, 163, 184, 0.15);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #475569;
+}
+
+.cv-skill-col:nth-child(3) .cv-skill-item:hover {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+/* Пустой уровень */
+.cv-skill-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* =========================================================
+   EDUCATION — PREMIUM GLASS CARDS
+========================================================= */
+
+.cv-edu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Карточка образования */
+.cv-edu-item {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+
+  padding: 26px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  transition: all 0.25s ease;
+}
+
+/* Hover эффект — лёгкий подъём */
+.cv-edu-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* Заголовок: университет + степень */
+.cv-edu-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cv-edu-inst {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-strong);
+  letter-spacing: -0.3px;
+}
+
+.cv-edu-degree {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Город */
+.cv-edu-meta {
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Даты */
+.cv-edu-dates {
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Описание */
+.cv-edu-description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #374151;
+  margin-top: 4px;
+}
+
+/* Сертификат */
+.cv-edu-certificate a {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cv-edu-certificate a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   INLINE EDITING
+========================================================= */
+[contenteditable="true"] {
+  transition: var(--transition);
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+[contenteditable="true"]:hover {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+[contenteditable="true"]:focus {
+  outline: 2px solid var(--primary);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  border-radius: 10px;
+}
+
+/* PLACEHOLDER */
+[contenteditable="true"]:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+  font-style: italic;
+}
+
+/* SELECTION */
+::selection {
+  background: rgba(79, 70, 229, 0.25);
+}
+
+/* =========================================================
+   EDIT BUTTON — PREMIUM GLASS
+========================================================= */
+.cv-edit-btn {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: var(--transition);
+}
+
+.cv-block:hover .cv-edit-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cv-edit-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   INLINE TOOLBAR (OPTIONAL)
+========================================================= */
+.cv-inline-toolbar {
+  position: absolute;
+  top: -48px;
+  left: 0;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.cv-inline-toolbar.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.cv-inline-toolbar button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--text-strong);
+  transition: var(--transition);
+}
+
+.cv-inline-toolbar button:hover {
+  background: rgba(0,0,0,0.06);
+}

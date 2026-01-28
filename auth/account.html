@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Аккаунт</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <!-- Иконки -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div id="globalHeaderMount"></div>
+
+        <div class="auth-container">
+            <h2>Аккаунт</h2>
+
+            <button id="deleteBtn" class="danger">Удалить аккаунт</button>
+            <button id="logoutBtn">Выйти</button>
+
+            <p id="error"></p>
+        </div>
+
+        <!-- Модалка подтверждения удаления -->
+        <div class="modal-overlay" id="confirmModal">
+            <div class="modal-window">
+                <h3>Удалить аккаунт?</h3>
+                <p>Это действие необратимо. Ваши данные будут удалены навсегда.</p>
+
+                <div class="modal-actions">
+                <button class="modal-btn cancel" id="cancelDelete">Отмена</button>
+                <button class="modal-btn danger" id="confirmDelete">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+  import { deleteAccount, requireAuth } from '/js/auth.js';
+  import { initGlobalHeader } from "/js/header.js";
+  import { supabase } from "/js/supabase.js";
+
+  initGlobalHeader();
+  await requireAuth();
+
+  const modal = document.getElementById("confirmModal");
+  const deleteBtn = document.getElementById("deleteBtn");
+  const cancelDelete = document.getElementById("cancelDelete");
+  const confirmDelete = document.getElementById("confirmDelete");
+
+  // Открыть модалку
+  deleteBtn.onclick = () => {
+    modal.classList.add("active");
+  };
+
+  // Закрыть модалку
+  cancelDelete.onclick = () => {
+    modal.classList.remove("active");
+  };
+
+  // Подтверждение удаления
+  confirmDelete.onclick = async () => {
+    try {
+      await deleteAccount();
+      window.location.href = '/auth/index.html';
+    } catch (err) {
+      document.getElementById("error").textContent = err.message;
+    }
+  };
+
+  // Логаут
+  document.getElementById('logoutBtn').onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/auth/index.html';
+  };
+</script>
+
+</body>
+</html>
