@@ -20,31 +20,22 @@ jobs:
       - name: Rewrite absolute paths for GitHub Pages
         run: |
           echo "=== BEFORE REWRITE ==="
-          grep -R '/js/' -n build || true
-          grep -R '/css/' -n build || true
+          grep -R '="/js/' -n build || true
+          grep -R '="/css/' -n build || true
 
           # HTML: CSS
-          find build -type f -name "*.html" -exec sed -i 's|href=[\"\x27]/css/|href="/cvforge/css/|g' {} +
-          find build -type f -name "*.html" -exec sed -i 's|src=[\"\x27]/css/|src="/cvforge/css/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|href="/css/|href="/cvforge/css/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|src="/css/|src="/cvforge/css/|g' {} +
 
           # HTML: JS
-          find build -type f -name "*.html" -exec sed -i 's|href=[\"\x27]/js/|href="/cvforge/js/|g' {} +
-          find build -type f -name "*.html" -exec sed -i 's|src=[\"\x27]/js/|src="/cvforge/js/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|href="/js/|href="/cvforge/js/|g' {} +
+          find build -type f -name "*.html" -exec sed -i 's|src="/js/|src="/cvforge/js/|g' {} +
 
-          # JS module imports (универсальный паттерн)
-          find build -type f -name "*.js" -exec sed -i 's|from [\"\x27]/js/|from "/cvforge/js/|g' {} +
+          # JS module imports
+          find build -type f -name "*.js" -exec sed -i 's|from "/js/|from "/cvforge/js/|g' {} +
 
-          # Переписываем ВСЕ абсолютные пути /js/... → /cvforge/js/...
-          find build -type f -name "*.html" -exec sed -i 's|/js/|/cvforge/js/|g' {} +
-          find build -type f -name "*.js"   -exec sed -i 's|/js/|/cvforge/js/|g' {} +
-
-          # Переписываем ВСЕ абсолютные пути /css/... → /cvforge/css/...
-          find build -type f -name "*.html" -exec sed -i 's|/css/|/cvforge/css/|g' {} +
-          find build -type f -name "*.css"  -exec sed -i 's|/css/|/cvforge/css/|g' {} +
-
-          # Переписываем url(/...) → url(/cvforge/...)
-          find build -type f -name "*.css"  -exec sed -i 's|url(/|url(/cvforge/|g' {} +
-
+          # CSS url()
+          find build -type f -name "*.css" -exec sed -i 's|url(/|url(/cvforge/|g' {} +
 
           echo "=== AFTER REWRITE ==="
           grep -R '/cvforge/js/' -n build || true
