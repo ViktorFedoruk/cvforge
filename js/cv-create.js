@@ -2004,26 +2004,41 @@ function validateStep(step) {
 
 async function saveCV() {
   try {
+    console.group("=== SAVE CV START ===");
+
     setStatus("Сохраняем резюме...");
     nextBtn.disabled = true;
     prevBtn.disabled = true;
     finishBtn.disabled = true;
 
-    // Получаем пользователя
+    /* -------------------------------------------------------
+       USER
+    ------------------------------------------------------- */
+    console.log("[1] Получаем пользователя…");
+
     const {
       data: { user },
       error: userError
     } = await supabase.auth.getUser();
 
+    console.log("[1] user =", user);
+    console.log("[1] userError =", userError);
+
     if (userError || !user) {
-      console.error(userError);
+      console.error("[1] Ошибка получения пользователя:", userError);
       setStatus("Не удалось определить пользователя. Перезайди в систему.", true);
+      console.groupEnd();
       return;
     }
 
     /* -------------------------------------------------------
        1. Создаём запись CV
     ------------------------------------------------------- */
+    console.log("[2] Создаём CV…", {
+      title: wizardState.profile.title,
+      user_id: user.id
+    });
+
     const { data: cvInsert, error: cvError } = await supabase
       .from("cv")
       .insert({
@@ -2036,9 +2051,13 @@ async function saveCV() {
       .select("id")
       .single();
 
+    console.log("[2] cvInsert =", cvInsert);
+    console.log("[2] cvError =", cvError);
+
     if (cvError || !cvInsert) {
-      console.error(cvError);
+      console.error("[2] Ошибка создания CV:", cvError);
       setStatus("Ошибка создания резюме.", true);
+      console.groupEnd();
       return;
     }
 
@@ -2048,6 +2067,8 @@ async function saveCV() {
     /* -------------------------------------------------------
        2. ДОЗАПОЛНЯЕМ cv_profiles
     ------------------------------------------------------- */
+    console.log("[3] Обновляем cv_profiles…");
+
     const profileUpdate = {
       full_name: wizardState.profile.full_name || null,
       position: wizardState.profile.position || null,
@@ -2056,8 +2077,6 @@ async function saveCV() {
       phone: wizardState.profile.phone || null,
       location: wizardState.profile.location || null,
       avatar_url: wizardState.profile.avatar_url || null,
-
-      // дополнительные контакты
       telegram: wizardState.profile.telegram || null,
       github: wizardState.profile.github || null,
       website: wizardState.profile.website || null,
@@ -2068,34 +2087,40 @@ async function saveCV() {
       dribbble: wizardState.profile.dribbble || null
     };
 
+    console.log("[3] profileUpdate =", profileUpdate);
+
     const { error: cvProfileError } = await supabase
       .from("cv_profiles")
       .update(profileUpdate)
       .eq("cv_id", cvId);
 
-    if (cvProfileError) {
-      console.error("cv_profiles update error:", cvProfileError);
-    }
+    console.log("[3] cvProfileError =", cvProfileError);
 
     /* -------------------------------------------------------
-       3. Преимущества (advantages)
+       3. Преимущества
     ------------------------------------------------------- */
+    console.log("[4] Добавляем advantages…", wizardState.advantages);
+
     if (wizardState.advantages.length > 0) {
-      const advRows = wizardState.advantages.map((tag) => ({
+      const advRows = wizardState.advantages.map(tag => ({
         cv_id: cvId,
         tag
       }));
+
+      console.log("[4] advRows =", advRows);
 
       const { error: advError } = await supabase
         .from("advantages")
         .insert(advRows);
 
-      if (advError) console.error("advantages error", advError);
+      console.log("[4] advError =", advError);
     }
 
     /* -------------------------------------------------------
-       4. Опыт (experience)
+       4. Опыт
     ------------------------------------------------------- */
+    console.log("[5] Добавляем experience…", wizardState.experience);
+
     if (wizardState.experience.length > 0) {
       const expRows = wizardState.experience.map((e, idx) => ({
         cv_id: cvId,
@@ -2109,16 +2134,20 @@ async function saveCV() {
         order_index: idx
       }));
 
+      console.log("[5] expRows =", expRows);
+
       const { error: expError } = await supabase
         .from("experience")
         .insert(expRows);
 
-      if (expError) console.error("experience error", expError);
+      console.log("[5] expError =", expError);
     }
 
     /* -------------------------------------------------------
-       5. Навыки (skills)
+       5. Навыки
     ------------------------------------------------------- */
+    console.log("[6] Добавляем skills…", wizardState.skills);
+
     const skillRows = [];
 
     Object.entries(wizardState.skills).forEach(([level, list]) => {
@@ -2131,19 +2160,23 @@ async function saveCV() {
       });
     });
 
+    console.log("[6] skillRows =", skillRows);
+
     if (skillRows.length > 0) {
       const { error: skillError } = await supabase
         .from("skills")
         .insert(skillRows);
 
-      if (skillError) console.error("skills error", skillError);
+      console.log("[6] skillError =", skillError);
     }
 
     /* -------------------------------------------------------
-       6. Образование (education)
+       6. Образование
     ------------------------------------------------------- */
+    console.log("[7] Добавляем education…", wizardState.education);
+
     if (wizardState.education.length > 0) {
-      const eduRows = wizardState.education.map((e) => ({
+      const eduRows = wizardState.education.map(e => ({
         cv_id: cvId,
         institution: e.institution || null,
         degree: e.degree || null,
@@ -2154,16 +2187,20 @@ async function saveCV() {
         description: e.description || null
       }));
 
+      console.log("[7] eduRows =", eduRows);
+
       const { error: eduError } = await supabase
         .from("education")
         .insert(eduRows);
 
-      if (eduError) console.error("education error", eduError);
+      console.log("[7] eduError =", eduError);
     }
 
     /* -------------------------------------------------------
-       Успех
+       SUCCESS
     ------------------------------------------------------- */
+    console.log("[8] Успех! CV создан:", cvId);
+
     setStatus("Резюме сохранено.");
 
     const successViewBtn = document.getElementById("successViewBtn");
@@ -2174,12 +2211,14 @@ async function saveCV() {
     showStep("success");
 
   } catch (err) {
-    console.error(err);
+    console.error("=== SAVE CV ERROR ===", err);
     setStatus("Непредвиденная ошибка при сохранении резюме.", true);
   } finally {
     nextBtn.disabled = false;
     prevBtn.disabled = false;
     finishBtn.disabled = false;
+
+    console.groupEnd();
   }
 }
 
