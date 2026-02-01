@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактор резюме — CVForge</title>
+
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/editor/editor-styles.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div id="globalHeaderMount"></div>
+
+  <div class="cv-editor-wrapper">
+
+    <header id="cvEditorTopbar" class="cv-topbar"></header>
+
+    <main class="cv-editor-body">
+      <!-- ВАЖНО: БЕЗ class="cv-editor-root" -->
+      <div id="cvEditorContent"></div>
+    </main>
+
+  </div>
+
+  
+    <!-- =====================================================
+         GLASS DATEPICKER (GLOBAL)
+    ====================================================== -->
+    <div id="glassDatepicker" class="gdp hidden">
+      <div class="gdp-header">
+        <button class="gdp-prev">‹</button>
+
+        <div class="gdp-dropdown">
+          <button class="gdp-month-btn"></button>
+          <div class="gdp-menu gdp-month-menu hidden"></div>
+        </div>
+
+        <div class="gdp-dropdown">
+          <button class="gdp-year-btn"></button>
+          <div class="gdp-menu gdp-year-menu hidden"></div>
+        </div>
+
+        <button class="gdp-next">›</button>
+      </div>
+
+      <div class="gdp-weekdays"></div>
+      <div class="gdp-days"></div>
+    </div>
+
+  <script type="module" src="./cv-edit.js"></script>
+  <script type="module">
+    import { initGlobalHeader } from "/js/header.js";
+    initGlobalHeader();
+  </script>
+</body>
+</html>

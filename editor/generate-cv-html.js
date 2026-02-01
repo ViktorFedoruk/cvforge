@@ -1,3 +1,26 @@
+/* ========================================================
+   SKILLS — MASONRY SORT (по длине name)
+======================================================== */
+function sortSkillsMasonry(skills) {
+  if (!skills || skills.length <= 2) return skills;
+
+  const sorted = [...skills].sort((a, b) => a.name.length - b.name.length);
+
+  const mid = Math.floor(sorted.length / 2);
+  const short = sorted.slice(0, mid);
+  const long = sorted.slice(mid);
+
+  const result = [];
+  let i = 0, j = 0;
+
+  while (i < long.length || j < short.length) {
+    if (i < long.length) result.push(long[i++]);
+    if (j < short.length) result.push(short[j++]);
+  }
+
+  return result;
+}
+
 export function generateCVHTML(state) {
   const { cv, cv_profile, experience, skills, advantages, education, expStats } = state;
 
@@ -16,11 +39,11 @@ export function generateCVHTML(state) {
       <!-- AVATAR FIRST -->
       <div class="cv-profile-avatar">
         ${
-          cv_profile?.avatar_url
-            ? `<img src="${cv_profile.avatar_url}" alt="avatar">`
+            cv_profile?.avatar_url
+            ? `<img src="${cv_profile.avatar_url}" alt="avatar" onerror="this.src='/img/avatar-placeholder.png'">`
             : `<div class="cv-profile-avatar-placeholder"><i class="fas fa-user"></i></div>`
         }
-      </div>
+        </div>
 
       <!-- TEXT BLOCK -->
       <div class="cv-profile-left">
@@ -120,39 +143,48 @@ export function generateCVHTML(state) {
     ====================================================== -->
     ${
     skills.length
-        ? `
+    ? `
     <section class="cv-block">
     <h2 class="cv-block-title">Навыки</h2>
 
     <div class="cv-skill-columns">
 
+        <!-- EXPERT -->
         <div class="cv-skill-col">
         <h3>Эксперт</h3>
         <div class="cv-skill-tags">
             ${
-            skills.filter(s => s.level === "expert")
+            sortSkillsMasonry(
+                skills.filter(s => s.level === "expert")
+            )
                 .map(s => `<div class="cv-skill-item">${s.name}</div>`)
                 .join("") || "<div class='cv-skill-empty'>—</div>"
             }
         </div>
         </div>
 
+        <!-- USED -->
         <div class="cv-skill-col">
         <h3>Опытный</h3>
         <div class="cv-skill-tags">
             ${
-            skills.filter(s => s.level === "used")
+            sortSkillsMasonry(
+                skills.filter(s => s.level === "used")
+            )
                 .map(s => `<div class="cv-skill-item">${s.name}</div>`)
                 .join("") || "<div class='cv-skill-empty'>—</div>"
             }
         </div>
         </div>
 
+        <!-- FAMILIAR -->
         <div class="cv-skill-col">
         <h3>Знаком</h3>
         <div class="cv-skill-tags">
             ${
-            skills.filter(s => s.level === "familiar")
+            sortSkillsMasonry(
+                skills.filter(s => s.level === "familiar")
+            )
                 .map(s => `<div class="cv-skill-item">${s.name}</div>`)
                 .join("") || "<div class='cv-skill-empty'>—</div>"
             }
@@ -162,7 +194,7 @@ export function generateCVHTML(state) {
     </div>
     </section>
     `
-        : ""
+    : ""
     }
 
 

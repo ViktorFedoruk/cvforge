@@ -1,0 +1,1252 @@
+/* =========================================================
+   ROOT VARIABLES — Hybrid Premium
+========================================================= */
+:root {
+  --page-width: 960px;
+  --bg-page: #eef2f7;
+  --bg-card: rgba(255, 255, 255, 0.78);
+  --bg-glass-strong: rgba(255, 255, 255, 0.55);
+
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --text-strong: #1f2937;
+
+  --primary: #2563eb;
+  --primary-2: #4f46e5;
+
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+  --shadow-deep: 0 28px 60px rgba(15, 23, 42, 0.12);
+
+  --transition: all 0.25s ease;
+}
+
+/* =========================================================
+   PAGE BACKGROUND
+========================================================= */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #e8ecf7, #f4f7fc);
+  background-size: 200% 200%;
+  animation: bgShift 18s ease infinite;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+@keyframes bgShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* =========================================================
+   EDITOR WRAPPER
+========================================================= */
+.cv-editor-root {
+  width: var(--page-width);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-xl);
+  padding: 30px 40px;
+  box-shadow: var(--shadow-deep);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+/* =========================================================
+   TOPBAR — GLASS HYBRID
+========================================================= */
+
+#cvEditorTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+
+  padding: 18px 26px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+  margin-bottom: 32px;
+
+  /* убираем сдвиг при скролле */
+  position: sticky;
+  top: 70px;
+  z-index: 10;
+}
+
+.cv-editor-body {
+  width: 100%;
+}
+
+/* ЛЕВАЯ / ЦЕНТРАЛЬНАЯ / ПРАВАЯ ЗОНЫ */
+#cvEditorTopbar .cv-topbar-left,
+#cvEditorTopbar .cv-topbar-center,
+#cvEditorTopbar .cv-topbar-right {
+  display: flex;
+  align-items: center;
+}
+
+#cvEditorTopbar .cv-topbar-center {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Заголовок */
+#cvEditorTopbar .cv-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-strong);
+  margin: 0;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Базовая кнопка */
+.topbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+}
+
+/* Акцентная кнопка */
+.topbar-btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  border: none;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+}
+
+.topbar-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.45);
+}
+
+/* =========================================================
+   SECTION BLOCKS
+========================================================= */
+
+.editor-section {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+
+  border-radius: var(--radius-lg);
+  padding: 40px 30px;
+  margin-bottom: 40px;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+}
+
+.editor-section h2 {
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-strong);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.editor-section h3 {
+  margin: 20px 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+/* =========================================================
+   GLOBAL BOX-SIZING FIX (обязателен для корректной сетки)
+========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   GRID SYSTEM
+========================================================= */
+
+.editor-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 700px) {
+  .editor-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   FORM LABELS — PREMIUM FIELD TITLES
+========================================================= */
+
+.editor-section label {
+  font-size: 14px;
+  color: #2d3035;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 2px;
+
+  text-shadow: 0 1px 3px rgba(0,0,0,0.06); /* лёгкая глубина */
+}
+
+/* =========================================================
+   INPUTS & TEXTAREAS
+========================================================= */
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: var(--radius-md);
+  border: 1.5px solid #e5e7eb;
+
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-family: inherit;
+  transition: var(--transition);
+
+  /* ключевой фикс переполнения */
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================================================
+   AVATAR BLOCK
+========================================================= */
+
+.editor-avatar-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  padding-top: 10px;
+}
+
+.avatar-preview-circle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 48px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.avatar-preview-circle.has-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+/* =========================================================
+   LISTS & ITEMS
+========================================================= */
+
+.editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editor-item,
+.editor-exp-block,
+.editor-edu-block {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-md);
+
+  padding: 18px;
+  position: relative;
+
+  transition: var(--transition);
+}
+
+.editor-item:hover,
+.editor-exp-block:hover,
+.editor-edu-block:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0,0,0,0.12);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.editor-exp-block textarea,
+.editor-edu-block textarea {
+  margin-top: 12px;
+}
+
+/* =========================================================
+   DELETE BUTTONS
+========================================================= */
+
+.delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  background: #ff5c5c;
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 28px;
+  text-align: center;
+
+  transition: var(--transition);
+}
+
+.delete-btn:hover {
+  background: #e64545;
+}
+
+/* =========================================================
+   ADD BUTTONS
+========================================================= */
+
+.add-btn {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+
+  background: #eef2ff;
+  border: 1px solid #d5ddff;
+  color: #4a7afe;
+
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: var(--transition);
+}
+
+.add-btn:hover {
+  background: #e0e7ff;
+}
+
+.add-btn-2 {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-top: 15px;
+  margin-left: auto;
+  display: block;
+
+  background: #eef2ff;
+  border: 1px solid #d5ddff;
+  color: #4a7afe;
+
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: var(--transition);
+}
+
+.add-btn-2:hover {
+  background: #e0e7ff;
+}
+/* =========================================================
+   TAGS & SUGGESTIONS
+========================================================= */
+
+.adv-input-row,
+.skill-input-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.adv-suggestions,
+.skill-suggestions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  border-radius: 8px;
+
+  background: rgba(243, 244, 246, 0.8);
+  border: 1px solid #e5e7eb;
+
+  font-size: 13px;
+  color: #374151;
+
+  transition: var(--transition);
+}
+
+.tag-pill:hover {
+  background: rgba(229, 231, 235, 0.9);
+  border-color: #d1d5db;
+}
+
+.tag-pill button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tag-pill button:hover {
+  color: #111827;
+}
+
+/* =========================================================
+   TAGS — STATIC FLEXIBLE PILLS (ADVANTAGES)
+========================================================= */
+
+/* Контейнер списка тегов */
+.editor-list.editor-list-tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 40px;
+}
+
+/* Сам тег */
+.adv-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #4338ca;
+
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  transition: var(--transition);
+
+  width: auto;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* Hover эффект */
+.adv-tag:hover {
+  background: rgba(99, 102, 241, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Текст внутри тега */
+.adv-tag-label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Кнопка удаления */
+.adv-tag-delete {
+  position: static;
+  width: 18px;
+  height: 18px;
+
+  font-size: 12px;
+  line-height: 18px;
+
+  background: #ff5c5c;
+  border-radius: 50%;
+  color: white;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.adv-tag-delete:hover {
+  background: #e64545;
+}
+
+/* =========================================================
+   EXPERIENCE — PREMIUM BLOCK STYLING
+========================================================= */
+
+/* Карточка опыта */
+.editor-exp-block {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-md);
+  padding: 22px 22px 28px;
+  position: relative;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: var(--transition);
+}
+
+/* Hover эффект */
+.editor-exp-block:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+/* Лейблы внутри опыта */
+.editor-exp-block label {
+  padding-left: 2px;
+  padding-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d3035;
+}
+
+/* Поля внутри опыта */
+.editor-exp-block .field-input {
+  margin-top: 4px;
+}
+
+/* Checkbox-row — выравнивание */
+.editor-exp-block .checkbox-row {
+  margin-top: 6px;
+  margin-bottom: 18px;
+}
+
+/* Текстовое описание */
+.editor-exp-block textarea.field-input {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* Кнопка удаления опыта */
+.editor-exp-block .delete-btn {
+  top: 14px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  line-height: 26px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.editor-exp-block .delete-btn:hover {
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   CITY AUTOCOMPLETE
+========================================================= */
+
+.city-input-wrapper {
+  position: relative;
+}
+
+.city-dropdown-container {
+  position: relative;
+}
+
+.city-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  max-height: 240px;
+  overflow-y: auto;
+
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.city-dropdown-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.city-dropdown-item:hover {
+  background: #eef2ff;
+  color: var(--primary);
+}
+
+/* =========================================================
+   UNIVERSITY AUTOCOMPLETE
+========================================================= */
+
+.university-input-wrapper {
+  position: relative;
+}
+
+.university-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  max-height: 240px;
+  overflow-y: auto;
+
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.university-dropdown-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.university-dropdown-item:hover {
+  background: #eef2ff;
+  color: var(--primary);
+}
+
+/* =========================================================
+   POSITION AUTOCOMPLETE
+========================================================= */
+
+.position-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.position-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 4px 0;
+
+  max-height: 220px;
+  overflow-y: auto;
+
+  display: none;
+  z-index: 50;
+}
+
+.position-suggestion {
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.position-suggestion:hover {
+  background: #f3f4f6;
+}
+
+/* =========================================================
+   AVATAR CROP MODAL
+========================================================= */
+
+.avatar-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.avatar-modal-content {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: var(--radius-xl);
+  width: 440px;
+  max-width: 92%;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.avatar-crop-area {
+  width: 100%;
+  height: 320px;
+  background: #e5e7eb;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.avatar-crop-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240px;
+  height: 240px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.avatar-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* =========================================================
+   CHECKBOXES
+========================================================= */
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 12px;
+  font-size: 14px;
+  color: #444;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .cv-editor-root {
+    padding: 30px 20px 60px;
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   DATE INPUT WITH CALENDAR ICON
+========================================================= */
+
+.field-input[data-date-input] {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3' y='4' width='14' height='14' rx='2'/%3E%3Cpath d='M3 10h14'/%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M12 2v4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 20px;
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+.field-input[data-date-input]:hover {
+  background-color: rgba(0,0,0,0.02);
+}
+
+/* =========================================================
+   GLASS DATEPICKER — MAIN CONTAINER
+========================================================= */
+
+#glassDatepicker {
+  position: absolute;
+  z-index: 9999;
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  animation: fadeIn 0.25s ease;
+}
+
+#glassDatepicker.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   HEADER — стрелки + селекторы месяца/года
+========================================================= */
+
+.gdp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gdp-prev,
+.gdp-next {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+
+.gdp-prev:hover,
+.gdp-next:hover {
+  background: rgba(255,255,255,1);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   MONTH/YEAR BUTTONS
+========================================================= */
+
+.gdp-month-btn,
+.gdp-year-btn {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gdp-month-btn:hover,
+.gdp-year-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   DROPDOWN MENUS
+========================================================= */
+
+.gdp-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gdp-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10000;
+
+  width: max-content;
+  min-width: 120px;
+  max-height: 240px;
+  overflow-y: auto;
+
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  animation: fadeIn 0.2s ease;
+}
+
+.gdp-menu.hidden {
+  display: none;
+}
+
+.gdp-menu-item {
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.15s;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.gdp-menu-item:hover {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.gdp-menu-item.active {
+  background: rgba(99, 102, 241, 0.18);
+  color: #4338ca;
+  font-weight: 700;
+}
+
+/* =========================================================
+   WEEKDAYS + DAYS GRID
+========================================================= */
+
+.gdp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.gdp-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.gdp-day {
+  padding: 8px 0;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.gdp-day:hover {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.gdp-day.selected {
+  background: rgba(99, 102, 241, 0.18);
+  color: #4338ca;
+  font-weight: 700;
+}
+
+/* ========================================================
+   SKILLS — EDITOR VERSION (PREMIUM STYLE)
+======================================================== */
+
+/* Три колонки */
+.editor-skills-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 24px;
+}
+
+/* Колонка уровня */
+.skills-column {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 22px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+}
+
+.skills-column:hover {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+/* Заголовок уровня */
+.skills-column h3 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  color: var(--text-strong);
+  letter-spacing: -0.3px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+/* Линии под заголовками */
+.skills-column:nth-child(1) h3::after,
+.skills-column:nth-child(2) h3::after,
+.skills-column:nth-child(3) h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+}
+
+.skills-column:nth-child(1) h3::after {
+  background: rgba(99, 102, 241, 0.8);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.25);
+}
+
+.skills-column:nth-child(2) h3::after {
+  background: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
+}
+
+.skills-column:nth-child(3) h3::after {
+  background: rgba(148, 163, 184, 0.8);
+  box-shadow: 0 3px 8px rgba(148, 163, 184, 0.25);
+}
+
+/* Список навыков */
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 40px;
+}
+
+/* Пиллы навыков — PREMIUM */
+.skill-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 7px 14px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+
+  white-space: nowrap;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.skill-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Цвета по уровням */
+.skill-pill[data-level="expert"] {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #4338ca;
+}
+
+.skill-pill[data-level="expert"]:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.skill-pill[data-level="used"] {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+.skill-pill[data-level="used"]:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.skill-pill[data-level="familiar"] {
+  background: rgba(148, 163, 184, 0.15);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #475569;
+}
+
+.skill-pill[data-level="familiar"]:hover {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+/* Кнопка удаления */
+.skill-pill .skill-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.skill-pill .skill-delete-btn:hover {
+  color: #111827;
+}
+
+/* Перетаскивание */
+.skill-pill.dragging {
+  opacity: 0.35;
+  transform: scale(0.96);
+  background: rgba(200, 200, 200, 0.25) !important;
+  border-color: rgba(200, 200, 200, 0.4) !important;
+  color: #555 !important;
+}
+
+/* Подсветка активной колонки */
+.skills-column.active {
+  outline: 3px dashed rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 20px;
+}
+
+/* Добавление навыка */
+.skill-add-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.skill-add-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.skill-add-row input:focus {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* =========================================================
+   SKILL COLORS (EDITOR) — как в режиме просмотра
+========================================================= */
+
+.skill-pill[data-level="expert"] {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #4338ca;
+}
+
+.skill-pill[data-level="expert"]:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.skill-pill[data-level="used"] {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+.skill-pill[data-level="used"]:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.skill-pill[data-level="familiar"] {
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #475569;
+}
+
+.skill-pill[data-level="familiar"]:hover {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+/* во время перетаскивания */
+.skill-pill.dragging {
+  opacity: 0.4;
+  background: rgba(200, 200, 200, 0.25) !important;
+  border-color: rgba(200, 200, 200, 0.4) !important;
+  color: #555 !important;
+}
+
+/* подсветка активной колонки */
+.skills-column.active {
+  outline: 3px dashed rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+}
