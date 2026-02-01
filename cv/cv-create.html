@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <title>Создание резюме</title>
   <link rel="stylesheet" href="/css/cv-create.css" />
+  <link rel="stylesheet" href="/css/header.css">
   <!-- FontAwesome Free -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-
+<div id="pageLoader" class="page-loader visible"></div>
+<div id="globalHeaderMount"></div>
 <div class="wizard-wrapper">
 
   <!-- HEADER -->
@@ -304,17 +306,19 @@
         </button>
 
         <template id="educationTemplate">
-            <div class="card">
+        <div class="card">
             <div class="card-header">
-                <span class="card-title">Новая запись</span>
-                <button class="icon-btn card-delete-btn">✕</button>
+            <span class="card-title">Новая запись</span>
+            <button class="icon-btn card-delete-btn">✕</button>
             </div>
 
             <div class="form-grid">
 
-                <!-- Institution -->
-                <div class="form-field">
+            <!-- Institution -->
+            <div class="form-field">
                 <label>Учебное заведение / курс</label>
+
+                <div class="university-input-wrapper">
                 <input
                     data-field="institution"
                     class="institution-input"
@@ -323,10 +327,13 @@
                 />
                 <div class="university-dropdown-container"></div>
                 </div>
+            </div>
 
-                <!-- City -->
-                <div class="form-field">
+            <!-- City -->
+            <div class="form-field">
                 <label>Город/Локация</label>
+
+                <div class="city-input-wrapper">
                 <input
                     data-field="city"
                     class="edu-city"
@@ -335,46 +342,47 @@
                 />
                 <div class="city-dropdown-container"></div>
                 </div>
+            </div>
 
-                <!-- Degree -->
-                <div class="form-field">
+            <!-- Degree -->
+            <div class="form-field">
                 <label>Степень / программа</label>
                 <input
-                    data-field="degree"
-                    placeholder="Например: Бакалавр, Курс по тестированию"
+                data-field="degree"
+                placeholder="Например: Бакалавр, Курс по тестированию"
                 />
-                </div>
+            </div>
 
-                <!-- Start date -->
-                <div class="form-field" data-field="start_date">
+            <!-- Start date -->
+            <div class="form-field" data-field="start_date">
                 <label>Дата начала</label>
-                <input data-field="start_date" type="date" />
-                </div>
+                <input data-field="start_date" type="text" placeholder="ДД.ММ.ГГГГ" />
+            </div>
 
-                <!-- End date -->
-                <div class="form-field" data-field="end_date">
+            <!-- End date -->
+            <div class="form-field" data-field="end_date">
                 <label>Дата окончания</label>
-                <input data-field="end_date" type="date" />
-                </div>
+                <input data-field="end_date" type="text" placeholder="ДД.ММ.ГГГГ" />
+            </div>
 
-                <!-- Certificate -->
-                <div class="form-field full">
+            <!-- Certificate -->
+            <div class="form-field full">
                 <label>Ссылка на сертификат</label>
                 <input data-field="certificate_url" placeholder="https://..." />
-                </div>
+            </div>
 
-                <!-- Description -->
-                <div class="form-field full">
+            <!-- Description -->
+            <div class="form-field full">
                 <label>Описание</label>
                 <textarea
-                    data-field="description"
-                    rows="2"
-                    placeholder="Кратко опиши, что это за обучение."
+                data-field="description"
+                rows="2"
+                placeholder="Кратко опиши, что это за обучение."
                 ></textarea>
-                </div>
+            </div>
 
             </div>
-            </div>
+        </div>
         </template>
         </section>
 
@@ -405,29 +413,46 @@
 </div>
 
 <div id="glassDatepicker" class="glass-datepicker hidden">
+
   <div class="gdp-header">
+
     <button class="gdp-prev">‹</button>
 
     <div class="gdp-selectors">
+
       <div class="gdp-dropdown">
         <button class="gdp-btn gdp-month-btn">Месяц</button>
+
+        <!-- ВАЖНО: меню должно быть ВНУТРИ календаря -->
         <div class="gdp-menu gdp-month-menu hidden"></div>
       </div>
 
       <div class="gdp-dropdown">
         <button class="gdp-btn gdp-year-btn">Год</button>
+
+        <!-- ВАЖНО: меню должно быть ВНУТРИ календаря -->
         <div class="gdp-menu gdp-year-menu hidden"></div>
       </div>
+
     </div>
 
     <button class="gdp-next">›</button>
+
   </div>
 
   <div class="gdp-weekdays"></div>
   <div class="gdp-days"></div>
+
 </div>
 
 <script src="https://unpkg.com/imask"></script>
-<script type="module" src="/js/cv-create.js"></script>
+
+<script type="module">
+  import { initGlobalHeader } from "/js/header.js";
+  import "/js/cv-create.js";
+
+  initGlobalHeader("#globalHeaderMount");
+</script>
+
 </body>
 </html>

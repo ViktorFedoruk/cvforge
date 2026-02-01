@@ -437,7 +437,7 @@ function attachUniversityAutocomplete(inputEl) {
 }
 
 /* =========================================================
-   GLASS DATEPICKER — CORE LOGIC (dropdown версия)
+   GLASS DATEPICKER — CORE LOGIC (dropdown версия, фикс hide)
 ========================================================= */
 
 const dp = document.getElementById("glassDatepicker");
@@ -452,8 +452,12 @@ const monthsRU = [
 const weekdaysRU = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 
 /* --------------------------------------------------------
-   DROPDOWN HELPERS
+   HELPERS
 -------------------------------------------------------- */
+function closeAllMenus() {
+  document.querySelectorAll(".gdp-menu").forEach(m => m.classList.add("hidden"));
+}
+
 function openMenu(menu) {
   document.querySelectorAll(".gdp-menu").forEach(m => {
     if (m !== menu) m.classList.add("hidden");
@@ -461,12 +465,24 @@ function openMenu(menu) {
   menu.classList.toggle("hidden");
 }
 
-function closeAllMenus() {
-  document.querySelectorAll(".gdp-menu").forEach(m => m.classList.add("hidden"));
+function hideDp() {
+  dp.classList.add("hidden");
 }
 
+/* --------------------------------------------------------
+   GLOBAL CLICK — закрываем только снаружи
+-------------------------------------------------------- */
 document.addEventListener("click", (e) => {
-  if (!e.target.closest(".gdp-dropdown")) closeAllMenus();
+  const insideDp       = !!e.target.closest("#glassDatepicker");
+  const insideInput    = !!e.target.closest("input[data-field='start_date'], input[data-field='end_date']");
+  const insideMenu     = !!e.target.closest(".gdp-menu");
+  const insideDropdown = !!e.target.closest(".gdp-dropdown");
+
+  // Любой клик по календарю, его меню или связанным инпутам — считаем "внутри"
+  if (insideDp || insideInput || insideMenu || insideDropdown) return;
+
+  closeAllMenus();
+  hideDp();
 });
 
 /* --------------------------------------------------------
@@ -511,7 +527,8 @@ function renderGlassDatepicker() {
 
   /* --- Обработчики меню --- */
   monthMenu.querySelectorAll(".gdp-menu-item").forEach(item => {
-    item.onclick = () => {
+    item.onclick = (e) => {
+      e.stopPropagation(); // не даём клику уйти на document
       dpDate.setMonth(Number(item.dataset.month));
       closeAllMenus();
       renderGlassDatepicker();
@@ -519,15 +536,23 @@ function renderGlassDatepicker() {
   });
 
   yearMenu.querySelectorAll(".gdp-menu-item").forEach(item => {
-    item.onclick = () => {
+    item.onclick = (e) => {
+      e.stopPropagation(); // не даём клику уйти на document
       dpDate.setFullYear(Number(item.dataset.year));
       closeAllMenus();
       renderGlassDatepicker();
     };
   });
 
-  monthBtn.onclick = () => openMenu(monthMenu);
-  yearBtn.onclick = () => openMenu(yearMenu);
+  monthBtn.onclick = (e) => {
+    e.stopPropagation();
+    openMenu(monthMenu);
+  };
+
+  yearBtn.onclick = (e) => {
+    e.stopPropagation();
+    openMenu(yearMenu);
+  };
 
   /* --- Рендер дней месяца --- */
   const firstDay = new Date(dpDate.getFullYear(), dpDate.getMonth(), 1);
@@ -559,20 +584,17 @@ function renderGlassDatepicker() {
   /* --- Клик по дню --- */
   daysEl.querySelectorAll(".gdp-day").forEach(day => {
     day.onclick = () => {
-      if (dpTargetInput.disabled) return;
+      if (!dpTargetInput || dpTargetInput.disabled) return;
 
       const iso = day.dataset.iso;
       const ru = day.dataset.ru;
 
-      // Вставляем СНГ-формат в поле
       dpTargetInput.value = ru;
 
-      // В state сохраняем ISO
-      if (dpTargetInput._onSelect) {
-        dpTargetInput._onSelect(iso);
-      }
+      if (dpTargetInput._onSelect) dpTargetInput._onSelect(iso);
 
-      dp.classList.add("hidden");
+      closeAllMenus();
+      hideDp();
     };
   });
 }
@@ -580,12 +602,14 @@ function renderGlassDatepicker() {
 /* --------------------------------------------------------
    ПЕРЕКЛЮЧЕНИЕ МЕСЯЦЕВ
 -------------------------------------------------------- */
-dp.querySelector(".gdp-prev").onclick = () => {
+dp.querySelector(".gdp-prev").onclick = (e) => {
+  e.stopPropagation();
   dpDate.setMonth(dpDate.getMonth() - 1);
   renderGlassDatepicker();
 };
 
-dp.querySelector(".gdp-next").onclick = () => {
+dp.querySelector(".gdp-next").onclick = (e) => {
+  e.stopPropagation();
   dpDate.setMonth(dpDate.getMonth() + 1);
   renderGlassDatepicker();
 };
@@ -598,7 +622,6 @@ function attachGlassDatepicker(input, onSelect) {
   input.placeholder = "ДД.ММ.ГГГГ";
   input._onSelect = onSelect;
 
-  /* --- Маска ДД.ММ.ГГГГ --- */
   input.addEventListener("input", () => {
     let v = input.value.replace(/[^\d]/g, "");
 
@@ -619,11 +642,17 @@ function attachGlassDatepicker(input, onSelect) {
     }
   });
 
-  /* --- Открытие календаря --- */
-  input.addEventListener("click", () => {
+  input.addEventListener("click", (e) => {
     if (input.disabled) return;
 
+    e.stopPropagation();
     dpTargetInput = input;
+
+    const match = input.value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if (match) {
+      const [_, dd, mm, yyyy] = match;
+      dpDate = new Date(`${yyyy}-${mm}-${dd}`);
+    }
 
     const rect = input.getBoundingClientRect();
     dp.style.top = rect.bottom + window.scrollY + 8 + "px";
@@ -1449,31 +1478,6 @@ fields.forEach((field) => {
         }
       }
     });
-
-    /* -------------------------------------------------------
-       РАБОЧЕЕ ЛОКАЛЬНОЕ АВТОСКРЫТИЕ
-    ------------------------------------------------------- */
-
-    let clickedInside = false;
-
-    // если кликнули внутри календаря — не скрываем
-    dp.addEventListener("mousedown", () => {
-      clickedInside = true;
-    });
-
-    // показываем календарь при фокусе
-    field.addEventListener("focus", () => {
-      dp.classList.remove("hidden");
-    });
-
-    // скрываем при blur, если НЕ было клика по календарю
-    field.addEventListener("blur", () => {
-      setTimeout(() => {
-        if (!clickedInside) dp.classList.add("hidden");
-        clickedInside = false;
-      }, 0);
-    });
-
     return;
   }
 
@@ -1852,11 +1856,6 @@ function addEducationCard(data = {}) {
         wizardState.education[idx][key] = isoDate;
         clearFieldError(field);
         });
-
-        field.addEventListener("blur", () => {
-        setTimeout(() => dp.classList.add("hidden"), 150);
-        });
-
         return;
     }
 

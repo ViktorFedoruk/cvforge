@@ -35,7 +35,7 @@ body {
 /* WRAPPER */
 .wizard-wrapper {
   max-width: 1100px;
-  margin: 40px auto;
+  margin: 100px auto;
   padding: 28px 36px;
   background: var(--bg-glass);
   border-radius: var(--radius-xl);
@@ -1236,7 +1236,7 @@ body {
 }
 
 /* -------------------------------------------------------
-   Колонка навыков (премиальный стиль)
+   Колонка навыков — белая, премиальная
 ------------------------------------------------------- */
 .skills-column {
   border: 1.5px solid #e5e7eb;
@@ -1259,15 +1259,44 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
+/* -------------------------------------------------------
+   Заголовки уровней + цветная полоска
+------------------------------------------------------- */
 .skills-column h3 {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 14px;
   color: #1f2937;
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.skills-column:nth-child(1) h3::after,
+.skills-column:nth-child(2) h3::after,
+.skills-column:nth-child(3) h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+}
+
+.skills-column:nth-child(1) h3::after {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+.skills-column:nth-child(2) h3::after {
+  background: rgba(59, 130, 246, 0.8);
+}
+
+.skills-column:nth-child(3) h3::after {
+  background: rgba(148, 163, 184, 0.8);
 }
 
 /* -------------------------------------------------------
-   Список навыков — теперь wrap
+   Список навыков
 ------------------------------------------------------- */
 .skills-list {
   display: flex;
@@ -1277,42 +1306,70 @@ body {
 }
 
 /* -------------------------------------------------------
-   Pill навыка — премиальный стиль
+   Премиальные цветные пиллы навыков
 ------------------------------------------------------- */
 .tag-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
 
-  background: rgba(243, 244, 246, 0.8);
-  border: 1px solid #e5e7eb;
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 
   font-size: 13px;
-  color: #374151;
+  font-weight: 600;
+  color: #1f2937;
 
   white-space: nowrap;
   max-width: 100%;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.tag-pill:hover {
-  background: rgba(229, 231, 235, 0.9);
-  border-color: #d1d5db;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+/* Цвета по уровням */
+.tag-pill[data-level="expert"] {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #4338ca;
 }
 
+.tag-pill[data-level="expert"]:hover {
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.tag-pill[data-level="used"] {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+.tag-pill[data-level="used"]:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.tag-pill[data-level="familiar"] {
+  background: rgba(148, 163, 184, 0.15);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #475569;
+}
+
+.tag-pill[data-level="familiar"]:hover {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+/* Кнопка удаления внутри пилла */
 .tag-pill button {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   color: #6b7280;
   padding: 0;
   line-height: 1;
+  transition: color 0.2s ease;
 }
 
 .tag-pill button:hover {
@@ -1320,7 +1377,7 @@ body {
 }
 
 /* -------------------------------------------------------
-   Рекомендации навыков — премиальный вид
+   Рекомендации навыков
 ------------------------------------------------------- */
 .tags-suggestions {
   display: flex;
@@ -1782,6 +1839,27 @@ select:-webkit-autofill:focus {
   background: rgba(99, 102, 241, 0.18);
   color: #4338ca;
   font-weight: 700;
+}
+
+#glassDatepicker,
+#glassDatepicker * {
+  pointer-events: auto;
+}
+
+.gdp-dropdown {
+  position: relative;
+  z-index: 10001; /* выше дней */
+}
+
+.gdp-menu {
+  z-index: 10002; /* выше dropdown */
+}
+
+/* FIX: allow datepicker menus to stay inside DOM context */
+.wizard-panel,
+.card,
+.form-grid {
+  overflow: visible !important;
 }
 
 /* =========================================================
