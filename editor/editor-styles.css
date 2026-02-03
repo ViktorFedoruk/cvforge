@@ -352,22 +352,35 @@ textarea {
   top: 10px;
   right: 10px;
 
-  background: #ff5c5c;
-  border: none;
-  color: #fff;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  cursor: pointer;
-  font-size: 15px;
-  line-height: 28px;
-  text-align: center;
+  border: 1px solid rgba(255, 0, 0, 0.25);
 
-  transition: var(--transition);
+  background: rgba(255, 0, 0, 0.12);
+  backdrop-filter: blur(6px);
+
+  color: #ef4444;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 .delete-btn:hover {
-  background: #e64545;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 /* =========================================================
@@ -518,28 +531,18 @@ textarea {
 
 /* Кнопка удаления */
 .adv-tag-delete {
-  position: static;
-  width: 18px;
-  height: 18px;
-
-  font-size: 12px;
-  line-height: 18px;
-
-  background: #ff5c5c;
-  border-radius: 50%;
-  color: white;
+  background: none;
   border: none;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   cursor: pointer;
-  transition: var(--transition);
+  font-size: 20px;
+  color: #ef4444;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
 }
 
 .adv-tag-delete:hover {
-  background: #e64545;
+  color: #ff0000;
 }
 
 /* =========================================================
@@ -1227,15 +1230,15 @@ textarea {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 20px;
+  color: #ef4444;
   padding: 0;
   line-height: 1;
   transition: color 0.2s ease;
 }
 
 .skill-pill .skill-delete-btn:hover {
-  color: #111827;
+  color: #ff0000;
 }
 
 /* Перетаскивание */
@@ -1334,4 +1337,29 @@ textarea {
 
 .cv-editor-wrapper.ready {
   opacity: 1;
+}
+
+.required {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  background: #fef2f2 !important;
+}
+
+/* Ошибки скрыты по умолчанию */
+.error-msg {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+  display: none;
+}
+
+/* Ошибка поля */
+.input-error {
+  border-color: #dc2626 !important;
+  background: #fff5f5 !important;
 }

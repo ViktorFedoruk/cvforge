@@ -1653,6 +1653,7 @@ const SKILL_SUGGESTIONS = [
 function createSkillPill(name, level, index) {
   const pill = document.createElement("div");
   pill.className = "tag-pill";
+  pill.dataset.level = level;
   pill.innerHTML = `
     ${name}
     <button data-level="${level}" data-index="${index}">✕</button>

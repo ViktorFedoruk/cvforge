@@ -1375,13 +1375,13 @@ body {
   padding: 7px 14px;
   border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.75);
+  background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+  color: #1d4ed8;
   border: 1px solid rgba(0,0,0,0.06);
   box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 
   font-size: 13px;
   font-weight: 600;
-  color: #1f2937;
 
   white-space: nowrap;
   max-width: 100%;
@@ -1447,9 +1447,9 @@ body {
 
 .suggestion-pill {
   padding: 6px 12px;
+  border-radius: 999px;
   background: rgba(238, 242, 255, 0.8);
   border: 1px solid #c7d2fe;
-  border-radius: 8px;
   font-size: 13px;
   color: #4338ca;
   cursor: pointer;
