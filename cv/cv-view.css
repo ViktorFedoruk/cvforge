@@ -732,3 +732,11 @@ body {
   transform: translateY(-2px);
 }
 
+.cv-view-wrapper {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.cv-view-wrapper.ready {
+  opacity: 1;
+}

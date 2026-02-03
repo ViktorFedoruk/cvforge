@@ -47,22 +47,22 @@ export function generateCVEditorHTML(data) {
 
         <!-- AVATAR BLOCK -->
         <div class="editor-avatar-block">
-          <div id="avatar_preview" class="avatar-preview-circle ${cv_profile.avatar_url ? "has-image" : ""}">
-            ${
-              cv_profile.avatar_url
-                ? `<img src="${cv_profile.avatar_url}">`
-                : `<i class="fa-solid fa-user"></i>`
-            }
-          </div>
+            <div id="avatar_preview" class="avatar-preview-circle ${cv_profile.avatar_url ? "has-image" : ""}">
+                ${
+                cv_profile.avatar_url
+                    ? `<img class="editor-avatar-img" src="/img/avatar-placeholder.png">`
+                    : `<i class="fa-solid fa-user"></i>`
+                }
+            </div>
 
-          <div class="avatar-actions">
-            <button id="avatar_upload_btn" class="topbar-btn ${cv_profile.avatar_url ? "hidden" : ""}">Загрузить</button>
-            <button id="avatar_change_btn" class="topbar-btn ${cv_profile.avatar_url ? "" : "hidden"}">Изменить</button>
-            <button id="avatar_delete_btn" class="topbar-btn danger ${cv_profile.avatar_url ? "" : "hidden"}">Удалить</button>
-          </div>
+            <div class="avatar-actions">
+                <button id="avatar_upload_btn" class="topbar-btn ${cv_profile.avatar_url ? "hidden" : ""}">Загрузить</button>
+                <button id="avatar_change_btn" class="topbar-btn ${cv_profile.avatar_url ? "" : "hidden"}">Изменить</button>
+                <button id="avatar_delete_btn" class="topbar-btn danger ${cv_profile.avatar_url ? "" : "hidden"}">Удалить</button>
+            </div>
 
-          <input id="avatar_file" type="file" accept="image/*" class="hidden">
-          <div id="avatar_error" class="avatar-error"></div>
+            <input id="avatar_file" type="file" accept="image/*" class="hidden">
+            <div id="avatar_error" class="avatar-error"></div>
         </div>
         
         <div class="editor-userinfo-block">

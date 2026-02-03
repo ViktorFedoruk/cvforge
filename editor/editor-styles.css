@@ -2,7 +2,7 @@
    ROOT VARIABLES — Hybrid Premium
 ========================================================= */
 :root {
-  --page-width: 960px;
+  --page-width: 1040px;
   --bg-page: #eef2f7;
   --bg-card: rgba(255, 255, 255, 0.78);
   --bg-glass-strong: rgba(255, 255, 255, 0.55);
@@ -84,6 +84,7 @@ body {
 
 .cv-editor-body {
   width: 100%;
+  padding-top: 32px;
 }
 
 /* ЛЕВАЯ / ЦЕНТРАЛЬНАЯ / ПРАВАЯ ЗОНЫ */
@@ -1249,4 +1250,13 @@ textarea {
   outline: 3px dashed rgba(59, 130, 246, 0.4);
   background: rgba(59, 130, 246, 0.08);
   border-radius: 8px;
+}
+
+.cv-editor-wrapper {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.cv-editor-wrapper.ready {
+  opacity: 1;
 }

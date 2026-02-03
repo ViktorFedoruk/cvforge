@@ -648,6 +648,10 @@ function resetAvatarEditor() {
   }
 
   cvData.cv_profile.avatar_url = null;
+
+  // очищаем кэш
+  localStorage.removeItem("cv_avatar");
+
   updateAvatarButtonsEditor(false);
 }
 
@@ -838,11 +842,65 @@ function openAvatarCropperModalEditor(file) {
   };
 }
 
+/* ========================================================
+   AVATAR CACHE FOR EDITOR
+======================================================== */
+
+async function blobToBase64Editor(blob) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function setEditorAvatarSrc(base64) {
+  const img = document.querySelector(".editor-avatar-img");
+  if (img) img.src = base64;
+}
+
+async function loadAvatarWithCacheEditor(url) {
+  if (!url) {
+    localStorage.removeItem("cv_avatar");
+    return;
+  }
+
+  const cached = JSON.parse(localStorage.getItem("cv_avatar") || "{}");
+
+  // 1. Показываем кэш мгновенно
+  if (cached.base64) {
+    setEditorAvatarSrc(cached.base64);
+  }
+
+  // 2. Проверяем ETag
+  let newETag = null;
+  try {
+    const head = await fetch(url, { method: "HEAD" });
+    newETag = head.headers.get("ETag");
+  } catch {}
+
+  if (cached.eTag === newETag && cached.base64) {
+    return; // кэш актуален
+  }
+
+  // 3. Загружаем новый аватар
+  try {
+    const blob = await fetch(url).then(r => r.blob());
+    const base64 = await blobToBase64Editor(blob);
+
+    localStorage.setItem("cv_avatar", JSON.stringify({
+      base64,
+      eTag: newETag
+    }));
+
+    setEditorAvatarSrc(base64);
+  } catch {}
+}
+
 /* -------------------------------------------------------
    СОХРАНЕНИЕ В SUPABASE
 ------------------------------------------------------- */
 async function saveAvatarEditor(blob) {
-  // Новый путь: внутри папки CV
   const fileName = `${cvId}/avatar_${Date.now()}.png`;
 
   const { error } = await supabase.storage
@@ -861,9 +919,19 @@ async function saveAvatarEditor(blob) {
 
   cvData.cv_profile.avatar_url = publicUrl;
 
+  // 1. Конвертируем blob → base64
+  const base64 = await blobToBase64Editor(blob);
+
+  // 2. Обновляем кэш
+  localStorage.setItem("cv_avatar", JSON.stringify({
+    base64,
+    eTag: null // заставим обновиться при следующем заходе
+  }));
+
+  // 3. Обновляем UI
   const preview = document.getElementById("avatar_preview");
   if (preview) {
-    preview.innerHTML = `<img src="${publicUrl}" alt="avatar">`;
+    preview.innerHTML = `<img class="editor-avatar-img" src="${base64}" alt="avatar">`;
     preview.classList.add("has-image");
   }
 
@@ -1399,11 +1467,30 @@ function renderEditor() {
   const root = document.getElementById("cvEditorContent");
   root.innerHTML = generateCVEditorHTML(cvData);
 
+  // --- подключаем события редактора аватара ---
+  attachAvatarEditorEvents();
+
+  // --- подгружаем аватар из кэша ---
+  if (cvData.cv_profile.avatar_url) {
+    loadAvatarWithCacheEditor(
+      cvData.cv_profile.avatar_url + "?width=200&height=200&quality=70"
+    );
+  } else {
+    localStorage.removeItem("cv_avatar");
+  }
+
+  // --- обновляем кнопки ---
+  updateAvatarButtonsEditor(!!cvData.cv_profile.avatar_url);
+
+  // --- остальная логика редактора ---
   dp = document.getElementById("glassDatepicker");
   hideCityDropdown();
   hideUniversityDropdown();
+  enhanceEditorUI();
 
-  enhanceEditorUI();                  
+  // --- ВАЖНО: включаем wrapper после полной инициализации ---
+  const wrapper = document.querySelector(".cv-editor-wrapper");
+  if (wrapper) wrapper.classList.add("ready");
 }
 
 /* -------------------------------------------------------

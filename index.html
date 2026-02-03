@@ -8,129 +8,145 @@
   <link rel="stylesheet" href="/css/home.css">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <script type="module">
-    import { initGlobalHeader } from "/js/header.js";
-      initGlobalHeader();
-  </script>
 </head>
 
 <body>
-
   <!-- WebGL background -->
-  <div id="pageLoader" class="page-loader visible"></div>
   <canvas id="bgCanvas"></canvas>
 
-  <div id="globalHeaderMount"></div>
+  <header class="global-header">
+    <a href="/index.html" class="logo">>_ CVForge</a>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-glass">
-      <h1>Создай своё префессиональное резюме за 5 минут</h1>
-      <p class="hero-subtitle">
-        4 простых шага. Умные рекомендации. Минимум ввода — максимум результата.
-        CVForge помогает сформулировать опыт, даже если ты не знаешь, с чего начать.
-      </p>
-
-      <button class="cta-btn hero-cta" id="startBtn2">
-        Начать бесплатно
-        <i class="fas fa-arrow-right"></i>
-      </button>
+    <div class="header-right" id="headerRight">
+      <!-- JS вставит кнопки -->
     </div>
-  </section>
+  </header>
 
-  <!-- FEATURES -->
-  <section class="features">
-    <h2>Почему CVForge?</h2>
+  <div id="pageLoader" class="page-loader">
+    <div class="loader-circle"></div>
+  </div>
 
-    <div class="features-grid">
+  <!-- ГЛАВНЫЙ КОНТЕЙНЕР КОНТЕНТА -->
+  <div id="pageContent">
 
-      <div class="feature-card">
-        <i class="fas fa-bolt"></i>
-        <h3>Быстро</h3>
-        <p>Заполнение занимает 5 минут. Мы подскажем формулировки.</p>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-glass">
+        <h1>Создай своё префессиональное резюме за 5 минут</h1>
+        <p class="hero-subtitle">
+          4 простых шага. Умные рекомендации. Минимум ввода — максимум результата.
+          CVForge помогает сформулировать опыт, даже если ты не знаешь, с чего начать.
+        </p>
+
+        <button class="cta-btn hero-cta" id="startBtn2">
+          Начать бесплатно
+          <i class="fas fa-arrow-right"></i>
+        </button>
       </div>
+    </section>
 
-      <div class="feature-card">
-        <i class="fas fa-wand-magic-sparkles"></i>
-        <h3>Умно</h3>
-        <p>Система анализирует твой опыт и предлагает улучшения.</p>
+    <!-- FEATURES -->
+    <section class="features">
+      <h2>Почему CVForge?</h2>
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Быстро</h3>
+          <p>Заполнение занимает 5 минут. Мы подскажем формулировки.</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <h3>Умно</h3>
+          <p>Система анализирует твой опыт и предлагает улучшения.</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-layer-group"></i>
+          <h3>Просто</h3>
+          <p>Никаких сложных форм. Только то, что действительно важно.</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-check-circle"></i>
+          <h3>Эффективно</h3>
+          <p>Резюме, которое выделяет тебя среди кандидатов.</p>
+        </div>
+
       </div>
+    </section>
 
-      <div class="feature-card">
-        <i class="fas fa-layer-group"></i>
-        <h3>Просто</h3>
-        <p>Никаких сложных форм. Только то, что действительно важно.</p>
+    <!-- STEPS -->
+    <section class="steps">
+      <h2>Всего 4 шага до готового резюме</h2>
+
+      <div class="steps-grid">
+
+        <div class="step">
+          <span class="step-number">1</span>
+          <h3>Профиль</h3>
+          <p>Имя, должность, контакты — всё просто и понятно.</p>
+        </div>
+
+        <div class="step">
+          <span class="step-number">2</span>
+          <h3>Опыт</h3>
+          <p>Умные подсказки помогают описать результаты, а не обязанности.</p>
+        </div>
+
+        <div class="step">
+          <span class="step-number">3</span>
+          <h3>Навыки и образование</h3>
+          <p>Добавляй только важное — мы подскажем, что выделит тебя.</p>
+        </div>
+
+        <div class="step">
+          <span class="step-number">4</span>
+          <h3>Готово</h3>
+          <p>Получай аккуратное резюме, которое работает.</p>
+        </div>
+
       </div>
+    </section>
 
-      <div class="feature-card">
-        <i class="fas fa-check-circle"></i>
-        <h3>Эффективно</h3>
-        <p>Резюме, которое выделяет тебя среди кандидатов.</p>
+    <!-- CTA FINAL -->
+    <section class="cta-final">
+      <div class="cta-glass">
+        <h2>Готов создать резюме, которое работает?</h2>
+        <button class="cta-btn cta-large" id="startBtn2">Начать бесплатно</button>
       </div>
+    </section>
 
-    </div>
-  </section>
+  </div> <!-- /pageContent -->
 
-  <!-- STEPS -->
-  <section class="steps">
-    <h2>Всего 4 шага до готового резюме</h2>
-
-    <div class="steps-grid">
-
-      <div class="step">
-        <span class="step-number">1</span>
-        <h3>Профиль</h3>
-        <p>Имя, должность, контакты — всё просто и понятно.</p>
-      </div>
-
-      <div class="step">
-        <span class="step-number">2</span>
-        <h3>Опыт</h3>
-        <p>Умные подсказки помогают описать результаты, а не обязанности.</p>
-      </div>
-
-      <div class="step">
-        <span class="step-number">3</span>
-        <h3>Навыки и образование</h3>
-        <p>Добавляй только важное — мы подскажем, что выделит тебя.</p>
-      </div>
-
-      <div class="step">
-        <span class="step-number">4</span>
-        <h3>Готово</h3>
-        <p>Получай аккуратное резюме, которое работает.</p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="cta-final">
-    <div class="cta-glass">
-      <h2>Готов создать резюме, которое работает?</h2>
-      <button class="cta-btn cta-large" id="startBtn2">Начать бесплатно</button>
-    </div>
-  </section>
-
+  <!-- Фон -->
   <script type="module" src="/js/home-bg.js"></script>
 
+  <!-- Глобальный хэдер + лоадер -->
   <script type="module">
-    import { supabase } from "/js/supabase.js";
+    import { initGlobalHeader } from "/js/header.js";
 
-    document.querySelectorAll("#startBtn2").forEach(btn => {
-      btn.onclick = async () => {
-        const { data } = await supabase.auth.getSession();
-        const user = data?.session?.user;
-
-        if (user) {
-          window.location.href = "/dashboard.html";
-        } else {
-          window.location.href = "/auth/index.html";
-        }
-      };
+    // Ждём, пока DOM будет готов
+    document.addEventListener("DOMContentLoaded", () => {
+      initGlobalHeader();
     });
   </script>
+
+
+<script type="module">
+  import { supabase } from "/js/supabase.js";
+
+  document.querySelectorAll("#startBtn2").forEach(btn => {
+    btn.onclick = async () => {
+      const { data } = await supabase.auth.getSession();
+      const user = data?.session?.user;
+
+      window.location.href = user ? "/dashboard.html" : "/auth/index.html";
+    };
+  });
+</script>
 
 </body>
 </html>

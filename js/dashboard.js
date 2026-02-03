@@ -239,7 +239,7 @@ async function renderCVList() {
               <button class="cv-card-action-btn cv-view-btn" title="Просмотреть">
                   <i class="fas fa-eye"></i>
               </button>
-              <button class="cv-card-action-btn cv-edit-btn" title="Редактировать">
+              <button class="cv-card-action-btn cv-card-edit-btn" title="Редактировать">
                   <i class="fas fa-pen"></i>
               </button>
               <button class="cv-card-action-btn cv-delete-btn" title="Удалить">
@@ -254,9 +254,9 @@ async function renderCVList() {
       window.location.href = `/cv/cv-view.html?id=${cv.id}`;
     };
 
-    card.querySelector('.cv-edit-btn').onclick = e => {
+    card.querySelector('.cv-card-edit-btn').onclick = e => {
       e.stopPropagation();
-      window.location.href = `/cv/cv-view.html?id=${cv.id}&edit=1`;
+      window.location.href = `/cv/cv-edit.html?id=${cv.id}`;
     };
 
     card.querySelector('.cv-delete-btn').onclick = e => {

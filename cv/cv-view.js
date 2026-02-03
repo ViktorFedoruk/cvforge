@@ -82,6 +82,12 @@ function renderView() {
 
   document.getElementById("cvTopbar").innerHTML = topbar;
   document.getElementById("cvContent").innerHTML = html;
+
+  /* -------------------------------------------------------
+     ВАЖНО: включаем wrapper после вставки контента
+  ------------------------------------------------------- */
+  const wrapper = document.querySelector(".cv-view-wrapper");
+  if (wrapper) wrapper.classList.add("ready");
 }
 
 /* -------------------------------------------------------
