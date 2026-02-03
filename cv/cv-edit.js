@@ -788,25 +788,35 @@ function openAvatarCropperModalEditor(file) {
     updateTransform();
   };
 
-  cropArea.onmousedown = e => {
-    dragging = true;
+  let isMouseDown = false;
+
+  cropArea.addEventListener("mousedown", e => {
+    e.preventDefault(); // не даём браузеру начать drag/selection
+    isMouseDown = true;
     lastX = e.clientX;
     lastY = e.clientY;
-  };
+    cropArea.classList.add("dragging");
+  });
 
-  document.onmouseup = () => dragging = false;
+  document.addEventListener("mousemove", e => {
+    if (!isMouseDown) return;
 
-  document.onmousemove = e => {
-    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
 
-    imgX += e.clientX - lastX;
-    imgY += e.clientY - lastY;
+    imgX += dx;
+    imgY += dy;
 
     lastX = e.clientX;
     lastY = e.clientY;
 
     updateTransform();
-  };
+  });
+
+  document.addEventListener("mouseup", () => {
+    isMouseDown = false;
+    cropArea.classList.remove("dragging");
+  });
 
   cancelBtn.onclick = () => {
     modal.style.display = "none";

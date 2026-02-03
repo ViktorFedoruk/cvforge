@@ -1012,32 +1012,37 @@ function openAvatarCropperModal(file) {
   };
 
   /* ---------------- ПЕРЕМЕЩЕНИЕ ---------------- */
-  cropArea.onmousedown = e => {
-    isDragging = true;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    img.style.cursor = "grabbing";
-  };
+  let isMouseDown = false;
+  let startX = 0;
+  let startY = 0;
 
-  document.onmouseup = () => {
-    isDragging = false;
-    img.style.cursor = "grab";
-  };
+  cropArea.addEventListener("mousedown", e => {
+    e.preventDefault();
+    isMouseDown = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    cropArea.classList.add("dragging");
+  });
 
-  document.onmousemove = e => {
-    if (!isDragging) return;
+  document.addEventListener("mousemove", e => {
+    if (!isMouseDown) return;
 
-    const dx = e.clientX - lastX;
-    const dy = e.clientY - lastY;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
 
     imgX += dx;
     imgY += dy;
 
-    lastX = e.clientX;
-    lastY = e.clientY;
+    startX = e.clientX;
+    startY = e.clientY;
 
     updateTransform();
-  };
+  });
+
+  document.addEventListener("mouseup", () => {
+    isMouseDown = false;
+    cropArea.classList.remove("dragging");
+  });
 
   /* ---------------- ОТМЕНА ---------------- */
   cancelBtn.onclick = () => {

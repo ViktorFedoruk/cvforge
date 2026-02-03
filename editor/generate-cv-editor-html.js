@@ -428,8 +428,8 @@ export function generateCVEditorHTML(data) {
         <input id="avatarZoom" type="range" min="0.2" max="5" step="0.01">
 
         <div class="avatar-modal-actions">
-          <button id="avatarCancel">Отмена</button>
-          <button id="avatarApply" class="primary">Применить</button>
+            <button id="avatarCancel" class="avatar-btn avatar-btn-cancel">Отмена</button>
+            <button id="avatarApply" class="avatar-btn avatar-btn-apply">Применить</button>
         </div>
       </div>
     </div>
