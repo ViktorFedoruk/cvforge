@@ -18,7 +18,10 @@ export async function initGlobalHeader() {
     .eq("id", user.id)
     .single();
 
-  const fullName = `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim();
+  const first = profile?.first_name || user.user_metadata?.first_name || "";
+  const last = profile?.last_name || user.user_metadata?.last_name || "";
+
+  const fullName = `${first} ${last}`.trim() || "Профиль";
 
   headerRight.innerHTML = `
     <div class="header-avatar" id="profileBtn">
