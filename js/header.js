@@ -4,14 +4,27 @@ export async function initGlobalHeader() {
   const { data } = await supabase.auth.getSession();
   const user = data?.session?.user;
 
+  /* -------------------------------------------------------
+     ГОСТЬ — показываем кнопки и вешаем обработчики
+  ------------------------------------------------------- */
   if (!user) {
     headerRight.innerHTML = `
       <button class="header-btn" id="loginBtn">Войти</button>
       <button class="header-btn" id="registerBtn">Регистрация</button>
     `;
+
+    document.getElementById("loginBtn").onclick = () =>
+      (window.location.href = "/auth/index.html");
+
+    document.getElementById("registerBtn").onclick = () =>
+      (window.location.href = "/auth/register.html");
+
     return;
   }
 
+  /* -------------------------------------------------------
+     АВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ
+  ------------------------------------------------------- */
   const { data: profile } = await supabase
     .from("profiles")
     .select("first_name, last_name")
@@ -36,7 +49,6 @@ export async function initGlobalHeader() {
     </div>
   `;
 
-  // обработчики меню
   const profileBtn = document.getElementById("profileBtn");
   const profileMenu = document.getElementById("profileMenu");
 
@@ -59,6 +71,7 @@ export async function initGlobalHeader() {
     window.location.href = "/auth/index.html";
   };
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const loader = document.getElementById("pageLoader");

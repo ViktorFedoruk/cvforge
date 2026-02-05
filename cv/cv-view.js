@@ -3,6 +3,15 @@ import { generateCVHTML } from "../editor/generate-cv-html.js";
 
 let cvId = null;
 let cvData = null;
+let currentUser = null;
+
+/* -------------------------------------------------------
+   LOAD CURRENT USER
+------------------------------------------------------- */
+async function loadCurrentUser() {
+  const { data } = await supabase.auth.getSession();
+  currentUser = data?.session?.user || null;
+}
 
 /* -------------------------------------------------------
    LOAD DATA
@@ -55,36 +64,103 @@ async function loadCV(id) {
 }
 
 /* -------------------------------------------------------
-   RENDER VIEW
+   RENDER VIEW (с учётом гостя / владельца / приватности)
 ------------------------------------------------------- */
 function renderView() {
-  const html = generateCVHTML(cvData);
+  const topbarEl = document.getElementById("cvTopbar");
+  const contentEl = document.getElementById("cvContent");
 
-  const topbar = `
-    <div class="cv-topbar-left">
-      <button id="backToDashboard" class="topbar-btn">
-        <i class="fas fa-arrow-left"></i>
-        Вернуться к дашборду
-      </button>
-    </div>
+  const cv = cvData.cv;
 
-    <div class="cv-topbar-center">
-      <h1 class="cv-title">${cvData.cv.title}</h1>
-    </div>
+  // Если cv === null → RLS запретил SELECT → резюме закрыто
+  if (!cv) {
+    topbarEl.style.display = "none";
 
-    <div class="cv-topbar-right">
-      <button id="editCvBtn" class="topbar-btn primary">
-        <i class="fas fa-edit"></i>
-        Редактировать
-      </button>
-    </div>
-  `;
+    contentEl.innerHTML = `
+      <div class="cv-locked">
+        <i class="fas fa-lock"></i>
+        <h2>Резюме недоступно</h2>
+        <p>Владелец отключил публичный доступ к этому резюме.</p>
+      </div>
+    `;
 
-  document.getElementById("cvTopbar").innerHTML = topbar;
-  document.getElementById("cvContent").innerHTML = html;
+    const wrapper = document.querySelector(".cv-view-wrapper");
+    if (wrapper) wrapper.classList.add("ready");
+    return;
+  }
+
+  const isOwner = currentUser && currentUser.id === cv.user_id;
+  const isPublic = cv.is_public === true;
 
   /* -------------------------------------------------------
-     ВАЖНО: включаем wrapper после вставки контента
+     1) Гость или не-владелец, а резюме закрыто → плейсхолдер
+  ------------------------------------------------------- */
+  if (!isOwner && !isPublic) {
+    topbarEl.style.display = "none";
+
+    contentEl.innerHTML = `
+      <div class="cv-locked">
+        <i class="fas fa-lock"></i>
+        <h2>Резюме недоступно</h2>
+        <p>Владелец отключил публичный доступ к этому резюме.</p>
+      </div>
+    `;
+
+    const wrapper = document.querySelector(".cv-view-wrapper");
+    if (wrapper) wrapper.classList.add("ready");
+    return;
+  }
+
+  /* -------------------------------------------------------
+     2) Рендерим обычный контент
+  ------------------------------------------------------- */
+  const html = generateCVHTML(cvData);
+  contentEl.innerHTML = html;
+
+  /* -------------------------------------------------------
+     3) Топбар
+  ------------------------------------------------------- */
+
+  // Гость → скрываем топбар
+  if (!currentUser) {
+    topbarEl.style.display = "none";
+  } else if (!isOwner) {
+    // Авторизован, но не владелец → только кнопка "Назад"
+    topbarEl.innerHTML = `
+      <div class="cv-topbar-left">
+        <button id="backToDashboard" class="topbar-btn">
+          <i class="fas fa-arrow-left"></i>
+          Назад
+        </button>
+      </div>
+      <div class="cv-topbar-center"></div>
+      <div class="cv-topbar-right"></div>
+    `;
+  } else {
+    // Владелец → полный топбар
+    topbarEl.innerHTML = `
+      <div class="cv-topbar-left">
+        <button id="backToDashboard" class="topbar-btn">
+          <i class="fas fa-arrow-left"></i>
+          Вернуться к дашборду
+        </button>
+      </div>
+
+      <div class="cv-topbar-center">
+        <h1 class="cv-title">${cv.title}</h1>
+      </div>
+
+      <div class="cv-topbar-right">
+        <button id="editCvBtn" class="topbar-btn primary">
+          <i class="fas fa-edit"></i>
+          Редактировать
+        </button>
+      </div>
+    `;
+  }
+
+  /* -------------------------------------------------------
+     4) Активация wrapper
   ------------------------------------------------------- */
   const wrapper = document.querySelector(".cv-view-wrapper");
   if (wrapper) wrapper.classList.add("ready");
@@ -171,7 +247,9 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   cvId = params.get("id");
 
+  await loadCurrentUser();
   await loadCV(cvId);
+
   renderView();
   setupEvents();
 }

@@ -1470,17 +1470,17 @@ function renderEditor() {
     </div>
 
     <div class="cv-topbar-right">
-      <button id="saveCvBtn" class="topbar-btn primary">Сохранить</button>
+      <button id="saveCvBtn" class="topbar-btn primary">
+        <span>Сохранить</span>
+      </button>
     </div>
   `;
 
   const root = document.getElementById("cvEditorContent");
   root.innerHTML = generateCVEditorHTML(cvData);
 
-  // --- подключаем события редактора аватара ---
   attachAvatarEditorEvents();
 
-  // --- подгружаем аватар из кэша ---
   if (cvData.cv_profile.avatar_url) {
     loadAvatarWithCacheEditor(
       cvData.cv_profile.avatar_url + "?width=200&height=200&quality=70"
@@ -1489,16 +1489,13 @@ function renderEditor() {
     localStorage.removeItem("cv_avatar");
   }
 
-  // --- обновляем кнопки ---
   updateAvatarButtonsEditor(!!cvData.cv_profile.avatar_url);
 
-  // --- остальная логика редактора ---
   dp = document.getElementById("glassDatepicker");
   hideCityDropdown();
   hideUniversityDropdown();
   enhanceEditorUI();
 
-  // --- ВАЖНО: включаем wrapper после полной инициализации ---
   const wrapper = document.querySelector(".cv-editor-wrapper");
   if (wrapper) wrapper.classList.add("ready");
 }
@@ -1507,6 +1504,21 @@ function renderEditor() {
    SAVE CHANGES (пока базовая версия)
 ------------------------------------------------------- */
 async function saveChanges() {
+  const btn = document.getElementById("saveCvBtn");
+  const btnText = btn?.querySelector("span");
+
+  if (btn) {
+    btn.classList.add("saving");
+
+    if (btnText) {
+      btnText.style.opacity = "0";
+      setTimeout(() => {
+        btnText.textContent = "Сохранение...";
+        btnText.style.opacity = "1";
+      }, 250);
+    }
+  }
+
   try {
     /* -----------------------------
        CV
@@ -1539,10 +1551,10 @@ async function saveChanges() {
        ADVANTAGES
     ------------------------------ */
     for (const adv of cvData.advantages) {
-        await supabase
-            .from("advantages")
-            .update({ tag: adv.tag })
-            .eq("id", adv.id);
+      await supabase
+        .from("advantages")
+        .update({ tag: adv.tag })
+        .eq("id", adv.id);
     }
 
     /* -----------------------------
@@ -1574,15 +1586,79 @@ async function saveChanges() {
       }).eq("id", ed.id);
     }
 
-    alert("Изменения сохранены");
+    /* -----------------------------------------
+       Сначала выключаем анимацию кнопки
+    ------------------------------------------ */
+    const newBtn = document.getElementById("saveCvBtn");
+    const newText = newBtn?.querySelector("span");
 
+    if (newBtn) newBtn.classList.remove("saving");
+
+    if (newText) {
+      newText.style.opacity = "0";
+      setTimeout(() => {
+        newText.textContent = "Сохранить";
+        newText.style.opacity = "1";
+      }, 150);
+    }
+
+    /* -----------------------------------------
+       Делаем небольшую паузу перед тостом
+    ------------------------------------------ */
+    setTimeout(() => {
+      showToast("Изменения сохранены", "success");
+    }, 200);
+
+    /* -----------------------------------------
+       И только после тоста — перерендер
+    ------------------------------------------ */
     await loadCV(cvId);
     renderEditor();
 
   } catch (err) {
     console.error(err);
-    alert("Ошибка сохранения");
+
+    const newBtn = document.getElementById("saveCvBtn");
+    const newText = newBtn?.querySelector("span");
+
+    if (newBtn) newBtn.classList.remove("saving");
+
+    if (newText) {
+      newText.style.opacity = "0";
+      setTimeout(() => {
+        newText.textContent = "Сохранить";
+        newText.style.opacity = "1";
+      }, 100);
+    }
+
+    setTimeout(() => {
+      showToast("Ошибка сохранения", "error");
+    }, 200);
   }
+}
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // Делаем небольшую паузу, чтобы браузер применил стартовые стили
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 30); // 20–30 мс — идеальное значение
+
+  // Через 3 секунды — плавное исчезновение
+  setTimeout(() => {
+    toast.classList.remove("show");
+    toast.classList.add("hide");
+
+    // Удаляем после завершения анимации
+    setTimeout(() => toast.remove(), 450);
+  }, 3000);
 }
 
 /* -------------------------------------------------------

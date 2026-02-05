@@ -103,9 +103,9 @@ async function loadAvatarWithCache(url) {
 export function generateCVHTML(state) {
   const { cv, cv_profile, experience, skills, advantages, education, expStats } = state;
 
-  const fullName = cv_profile?.full_name || "Имя Фамилия";
-  const position = cv_profile?.position || "Желаемая должность";
-  const summary = cv_profile?.summary || "Краткое описание появится здесь.";
+  const fullName = cv_profile?.full_name || "";
+  const position = cv_profile?.position || "";
+  const summary = cv_profile?.summary || "";
 
   const avatarUrl = cv_profile?.avatar_url
     ? `${cv_profile.avatar_url}?width=200&height=200&quality=70`

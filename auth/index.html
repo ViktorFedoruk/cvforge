@@ -50,6 +50,10 @@
 
   <script type="module">
     import { initGlobalHeader } from "/js/header.js";
+      document.addEventListener("DOMContentLoaded", () => {
+        initGlobalHeader();
+      });
+      
     import { login } from "/js/auth.js"; // если login у тебя в отдельном файле
 
     document.getElementById('loginBtn').onclick = async () => {

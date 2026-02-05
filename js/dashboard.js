@@ -148,7 +148,7 @@ async function loadFullCVState(cvId) {
 }
 
 /* -------------------------------------------------------
-   RENDER MINI PREVIEW
+   RENDER MINI PREVIEW — адаптивный скейл cv_root
 ------------------------------------------------------- */
 async function renderPreviewIntoCard(cv) {
   const container = document.getElementById(`preview-cv-${cv.id}`);
@@ -158,10 +158,40 @@ async function renderPreviewIntoCard(cv) {
     const state = await loadFullCVState(cv.id);
     const html = generateCVHTML(state);
     container.innerHTML = html;
+
+    requestAnimationFrame(() => applyPreviewScale(cv.id));
+
   } catch (err) {
-    console.error('Ошибка рендера мини-превью:', err);
+    console.error("Ошибка рендера мини-превью:", err);
   }
 }
+
+/* -------------------------------------------------------
+   APPLY SCALE — масштабирует cv_root под рамку
+------------------------------------------------------- */
+function applyPreviewScale(id) {
+  const inner = document.getElementById(`preview-cv-${id}`);
+  const frame = inner?.parentElement;
+  if (!inner || !frame) return;
+
+  const DOC_W = 1040;
+  const DOC_H = 1;
+
+  const availableW = frame.clientWidth;
+  const availableH = frame.clientHeight;
+
+  const scale = Math.min(availableW / DOC_W, availableH / DOC_H);
+
+  inner.style.width = DOC_W + "px";
+  inner.style.height = DOC_H + "px";
+  inner.style.transform = `scale(${scale})`;
+  inner.style.transformOrigin = "top left";
+}
+
+/* Пересчёт при ресайзе */
+window.addEventListener("resize", () => {
+  cvList.forEach(cv => applyPreviewScale(cv.id));
+});
 
 /* -------------------------------------------------------
    DELETE CV
@@ -186,6 +216,42 @@ async function deleteCVCascade(cvId) {
 ------------------------------------------------------- */
 function createCV() {
   window.location.href = `/cv/cv-create.html`;
+}
+
+/* -------------------------------------------------------
+   SHARE — COPY LINK
+------------------------------------------------------- */
+function copyShareLink(cvId) {
+  const link = `${window.location.origin}/cv/cv-view.html?id=${cvId}`;
+  navigator.clipboard.writeText(link);
+  showToast("Ссылка скопирована", "success");
+}
+
+/* -------------------------------------------------------
+   TOASTS
+------------------------------------------------------- */
+function showToast(message, type = "success") {
+  let container = document.getElementById("toastContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastContainer";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 /* -------------------------------------------------------
@@ -230,12 +296,23 @@ async function renderCVList() {
         <div class="cv-card-footer">
             <div class="cv-card-footer-main">
               <div class="cv-card-title">${cv.title || 'Без названия'}</div>
+
+              <div class="cv-card-access">
+                <label class="cv-public-toggle">
+                  <input type="checkbox" class="public-toggle" data-cv-id="${cv.id}" ${cv.is_public ? "checked" : ""}>
+                  <span>Публичное резюме</span>
+                </label>
+              </div>
+
               <div class="cv-card-meta">
                 ${new Date(cv.created_at).toLocaleDateString('ru-RU')} • ${cv.language?.toUpperCase() || 'RU'}
               </div>
             </div>
 
             <div class="cv-card-footer-actions">
+              <button class="share-btn" data-cv-id="${cv.id}" ${cv.is_public ? "" : "disabled"}>
+                <i class="fas fa-share-alt"></i>
+              </button>
               <button class="cv-card-action-btn cv-view-btn" title="Просмотреть">
                   <i class="fas fa-eye"></i>
               </button>
@@ -249,21 +326,57 @@ async function renderCVList() {
         </div>
     `;
 
+    /* VIEW */
     card.querySelector('.cv-view-btn').onclick = e => {
       e.stopPropagation();
       window.location.href = `/cv/cv-view.html?id=${cv.id}`;
     };
 
+    /* EDIT */
     card.querySelector('.cv-card-edit-btn').onclick = e => {
       e.stopPropagation();
       window.location.href = `/cv/cv-edit.html?id=${cv.id}`;
     };
 
+    /* DELETE */
     card.querySelector('.cv-delete-btn').onclick = e => {
       e.stopPropagation();
       openDeleteModal(cv.id);
     };
 
+    /* PUBLIC TOGGLE — блокируем всплытие */
+    const toggle = card.querySelector('.public-toggle');
+    toggle.addEventListener('mousedown', e => e.stopPropagation());
+    toggle.addEventListener('click', e => e.stopPropagation());
+
+    /* PUBLIC TOGGLE — логика */
+    toggle.onchange = async (e) => {
+      const isPublic = e.target.checked;
+      const cvId = e.target.dataset.cvId;
+
+      await supabase.from("cv")
+        .update({ is_public: isPublic })
+        .eq("id", cvId);
+
+      const shareBtn = card.querySelector(".share-btn");
+      shareBtn.disabled = !isPublic;
+
+      showToast(
+        isPublic ? "Резюме стало публичным" : "Публичный доступ отключён",
+        "success"
+      );
+    };
+
+    /* SHARE — мгновенное копирование */
+    card.querySelector('.share-btn').onclick = (e) => {
+      e.stopPropagation();
+      const btn = e.currentTarget;
+      if (btn.disabled) return;
+
+      copyShareLink(cv.id);
+    };
+
+    /* CARD CLICK → VIEW */
     card.onclick = () => {
       window.location.href = `/cv/cv-view.html?id=${cv.id}`;
     };
@@ -272,6 +385,7 @@ async function renderCVList() {
     renderPreviewIntoCard(cv);
   }
 
+  /* NEW CARD */
   const newCard = document.createElement('div');
   newCard.className = 'cv-card cv-card-new';
   newCard.onclick = createCV;
