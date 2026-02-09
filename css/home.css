@@ -1,23 +1,40 @@
 /* =========================================================
-   GLOBAL — WebGL фон рендерится в canvas
+   CRYSTAL AIR SURFACE — идеальная подложка под стекло
 ========================================================= */
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "SF Pro Display", sans-serif;
-  color: #1f2937;
-  min-height: 100vh;
+  background: linear-gradient(180deg, #f9fbff 0%, #f4f6fc 100%) fixed;
+  position: relative;
   overflow-x: hidden;
-  background: transparent;
 }
 
-#bgCanvas {
+/* Мягкая холодная подсветка */
+body::before {
+  content: "";
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  display: block;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 50% -10%, rgba(120,150,255,0.18), transparent 60%),
+    radial-gradient(circle at 90% 20%, rgba(150,170,255,0.12), transparent 65%),
+    radial-gradient(circle at 10% 80%, rgba(180,195,230,0.10), transparent 70%);
+
+  filter: blur(80px);
+  opacity: 0.85;
+  z-index: -2;
+}
+
+/* Очень мягкий шум — только чтобы убрать плоскость */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Crect width='1' height='1' fill='rgba(0,0,0,0.015)'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  z-index: -1;
 }
 
 /* =========================================================
@@ -304,28 +321,6 @@ body {
   animation: pulseIce 4s ease-in-out infinite;
 }
 
-.cta-large::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -40%;
-  width: 180%;
-  height: 60%;
-
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.55),
-    rgba(255, 255, 255, 0.05)
-  );
-
-  border-radius: inherit;
-  transform: translateY(-25%) rotate(-6deg);
-  pointer-events: none;
-
-  /* главное — linear + infinite */
-  animation: iceSweep 3.8s linear infinite;
-}
-
 /* внутреннее ледяное свечение */
 .cta-large::after {
   content: "";
@@ -356,24 +351,6 @@ body {
 /* =========================================================
    ANIMATIONS
 ========================================================= */
-
-@keyframes iceSweep {
-  0% {
-    transform: translateX(-160%) translateY(-25%) rotate(-6deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(160%) translateY(-25%) rotate(-6deg);
-    opacity: 0;
-  }
-}
-
 /* мягкая пульсация всей кнопки */
 @keyframes pulseIce {
   0% { box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35); }

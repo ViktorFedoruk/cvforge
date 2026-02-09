@@ -310,7 +310,7 @@ async function renderCVList() {
             </div>
 
             <div class="cv-card-footer-actions">
-              <button class="share-btn" data-cv-id="${cv.id}" ${cv.is_public ? "" : "disabled"}>
+              <button class="share-btn" title="Поделиться" data-cv-id="${cv.id}" ${cv.is_public ? "" : "disabled"}>
                 <i class="fas fa-share-alt"></i>
               </button>
               <button class="cv-card-action-btn cv-view-btn" title="Просмотреть">

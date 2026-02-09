@@ -33,10 +33,10 @@ async function blobToBase64(blob) {
   });
 }
 
-/* 
+/*
   ВАЖНО:
-  Теперь setAvatarSrc НЕ ищет .cv-avatar,
-  а заменяет placeholder на <img>.
+  setAvatarSrc по‑прежнему ищет .cv-avatar-placeholder,
+  но мы не трогаем сигнатуру, чтобы не ломать существующий код.
 */
 function setAvatarSrc(base64) {
   const placeholder = document.querySelector(".cv-avatar-placeholder");
@@ -54,11 +54,12 @@ function setAvatarSrc(base64) {
 
 async function loadAvatarWithCache(url) {
   if (!url) {
-    localStorage.removeItem("cv_avatar");
     return;
   }
 
-  const cached = JSON.parse(localStorage.getItem("cv_avatar") || "{}");
+  // 🔑 Кэш теперь привязан к конкретному URL
+  const cacheKey = `cv_avatar_${url}`;
+  const cached = JSON.parse(localStorage.getItem(cacheKey) || "{}");
 
   // 1. Показываем кэш мгновенно
   if (cached.base64) {
@@ -83,17 +84,35 @@ async function loadAvatarWithCache(url) {
     const blob = await fetch(url).then(r => r.blob());
     const base64 = await blobToBase64(blob);
 
-    // 4. Обновляем кэш
-    localStorage.setItem("cv_avatar", JSON.stringify({
-      base64,
-      eTag: newETag
-    }));
+    // 4. Обновляем кэш (уникальный ключ на каждый URL)
+    localStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        base64,
+        eTag: newETag
+      })
+    );
 
     // 5. Обновляем UI
     setAvatarSrc(base64);
   } catch (e) {
     console.warn("Avatar load failed:", e);
   }
+}
+
+/* -------------------------------------------------------
+   EMPLOYMENT TYPE LABEL (VIEW)
+------------------------------------------------------- */
+function employmentTypeLabel(value) {
+  const map = {
+    "": "Не указано",
+    full_time: "Полная занятость",
+    part_time: "Частичная занятость",
+    contract: "Контракт",
+    internship: "Стажировка",
+    freelance: "Фриланс"
+  };
+  return map[value] || "Не указано";
 }
 
 /* ========================================================
@@ -124,9 +143,11 @@ export function generateCVHTML(state) {
         ${
           avatarUrl
             ? `
-              <div class="cv-profile-avatar-placeholder cv-avatar-placeholder">
-                <i class="fas fa-user"></i>
-              </div>
+              <img 
+                class="cv-profile-avatar-img"
+                src="${avatarUrl}"
+                alt="avatar"
+              >
             `
             : `
               <div class="cv-profile-avatar-placeholder">
@@ -179,7 +200,7 @@ export function generateCVHTML(state) {
 
     </section>
 
-    <!-- EXPERIENCE -->
+    <!-- EXPERIENCE --!>
     ${
       experience.length
         ? `
@@ -189,7 +210,9 @@ export function generateCVHTML(state) {
       <div class="cv-exp-total">Общий опыт: ${expStats.totalFormatted}</div>
 
       <div class="cv-exp-list">
-        ${experience.map(e => `
+        ${experience
+          .map(
+            (e) => `
           <div class="cv-exp-item">
 
             <div class="cv-exp-header">
@@ -198,20 +221,49 @@ export function generateCVHTML(state) {
             </div>
 
             <div class="cv-exp-meta">
-              ${e.city ? `<i class="fas fa-map-marker-alt"></i> <span class="cv-exp-city">${e.city}</span>` : ""}
+              ${
+                e.city
+                  ? `<i class="fas fa-map-marker-alt"></i> <span class="cv-exp-city">${e.city}</span>`
+                  : ""
+              }
+              ${
+                e.employment_type
+                  ? `<span class="cv-exp-type">• ${employmentTypeLabel(e.employment_type)}</span>`
+                  : ""
+              }
             </div>
 
             <div class="cv-exp-dates">
               <span>${formatDate(e.start_date)}</span>
               —
-              <span>${e.current ? "По настоящее время" : formatDate(e.end_date)}</span>
+              <span>${
+                e.current ? "По настоящее время" : formatDate(e.end_date)
+              }</span>
               <span class="cv-exp-duration">(${e._durationFormatted})</span>
             </div>
 
-            <div class="cv-exp-description">${e.description || ""}</div>
+            ${
+              e.description
+                ? `<div class="cv-exp-description">${e.description}</div>`
+                : ""
+            }
+
+            ${
+              e.technologies
+                ? `<div class="cv-exp-tech"><strong>Технологии:</strong> ${e.technologies}</div>`
+                : ""
+            }
+
+            ${
+              e.projects
+                ? `<div class="cv-exp-projects"><strong>Проекты:</strong> ${e.projects}</div>`
+                : ""
+            }
 
           </div>
-        `).join("")}
+        `
+          )
+          .join("")}
       </div>
     </section>
     `

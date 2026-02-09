@@ -64,7 +64,7 @@ async function loadCV(id) {
 }
 
 /* -------------------------------------------------------
-   RENDER VIEW (с учётом гостя / владельца / приватности)
+   RENDER VIEW
 ------------------------------------------------------- */
 function renderView() {
   const topbarEl = document.getElementById("cvTopbar");
@@ -72,7 +72,7 @@ function renderView() {
 
   const cv = cvData.cv;
 
-  // Если cv === null → RLS запретил SELECT → резюме закрыто
+  // CASE: RLS запретил SELECT
   if (!cv) {
     topbarEl.style.display = "none";
 
@@ -84,17 +84,14 @@ function renderView() {
       </div>
     `;
 
-    const wrapper = document.querySelector(".cv-view-wrapper");
-    if (wrapper) wrapper.classList.add("ready");
+    document.querySelector(".cv-view-wrapper")?.classList.add("ready");
     return;
   }
 
   const isOwner = currentUser && currentUser.id === cv.user_id;
   const isPublic = cv.is_public === true;
 
-  /* -------------------------------------------------------
-     1) Гость или не-владелец, а резюме закрыто → плейсхолдер
-  ------------------------------------------------------- */
+  // CASE: Гость или не-владелец, а резюме закрыто
   if (!isOwner && !isPublic) {
     topbarEl.style.display = "none";
 
@@ -106,8 +103,7 @@ function renderView() {
       </div>
     `;
 
-    const wrapper = document.querySelector(".cv-view-wrapper");
-    if (wrapper) wrapper.classList.add("ready");
+    document.querySelector(".cv-view-wrapper")?.classList.add("ready");
     return;
   }
 
@@ -118,15 +114,26 @@ function renderView() {
   contentEl.innerHTML = html;
 
   /* -------------------------------------------------------
+     2.1) Загружаем аватар (ВАЖНО!)
+  ------------------------------------------------------- */
+  if (cvData.cv_profile.avatar_url && window.loadAvatarWithCache) {
+    window.loadAvatarWithCache(
+      cvData.cv_profile.avatar_url + "?width=200&height=200&quality=70",
+      cv.id,
+      contentEl
+    );
+  }
+
+  /* -------------------------------------------------------
      3) Топбар
   ------------------------------------------------------- */
+  let topbarHTML = "";
 
-  // Гость → скрываем топбар
   if (!currentUser) {
     topbarEl.style.display = "none";
+
   } else if (!isOwner) {
-    // Авторизован, но не владелец → только кнопка "Назад"
-    topbarEl.innerHTML = `
+    topbarHTML = `
       <div class="cv-topbar-left">
         <button id="backToDashboard" class="topbar-btn">
           <i class="fas fa-arrow-left"></i>
@@ -136,9 +143,9 @@ function renderView() {
       <div class="cv-topbar-center"></div>
       <div class="cv-topbar-right"></div>
     `;
+
   } else {
-    // Владелец → полный топбар
-    topbarEl.innerHTML = `
+    topbarHTML = `
       <div class="cv-topbar-left">
         <button id="backToDashboard" class="topbar-btn">
           <i class="fas fa-arrow-left"></i>
@@ -159,11 +166,15 @@ function renderView() {
     `;
   }
 
-  /* -------------------------------------------------------
-     4) Активация wrapper
-  ------------------------------------------------------- */
-  const wrapper = document.querySelector(".cv-view-wrapper");
-  if (wrapper) wrapper.classList.add("ready");
+  if (topbarHTML) {
+    const tempTopbar = document.createElement("div");
+    tempTopbar.innerHTML = topbarHTML;
+
+    morphdom(topbarEl, tempTopbar, { childrenOnly: true });
+    topbarEl.style.display = "";
+  }
+
+  document.querySelector(".cv-view-wrapper")?.classList.add("ready");
 }
 
 /* -------------------------------------------------------

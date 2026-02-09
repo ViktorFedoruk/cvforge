@@ -50,7 +50,7 @@ export function generateCVEditorHTML(data) {
             <div id="avatar_preview" class="avatar-preview-circle ${cv_profile.avatar_url ? "has-image" : ""}">
                 ${
                 cv_profile.avatar_url
-                    ? `<img class="editor-avatar-img" src="/img/avatar-placeholder.png">`
+                    ? `<img class="editor-avatar-img">`
                     : `<i class="fa-solid fa-user"></i>`
                 }
             </div>
@@ -106,7 +106,7 @@ export function generateCVEditorHTML(data) {
       </div>
 
       <label>О себе</label>
-      <textarea data-field="cv_profile.summary">${cv_profile.summary || ""}</textarea>
+      <textarea data-field="cv_profile.summary" placeholder="2–3 предложения о твоём опыте.">${cv_profile.summary || ""}</textarea>
 
       <h3>Контакты</h3>
       <div class="editor-grid-2">
@@ -178,21 +178,44 @@ export function generateCVEditorHTML(data) {
                 </div>
 
                 <div class="editor-grid-2">
-                <div>
-                    <label>Город</label>
+                    <div>
+                        <label>Город</label>
 
-                    <div class="city-input-wrapper">
-                      <input 
-                        class="field-input"
-                        type="text" placeholder="Город, Страна"
-                        data-exp-city="${e.id}"
-                        data-city-input
-                        value="${e.city || ""}"
-                      >
-                      <div class="city-dropdown-container"></div>
+                        <div class="city-input-wrapper">
+                        <input 
+                            class="field-input"
+                            type="text" placeholder="Город, Страна"
+                            data-exp-city="${e.id}"
+                            data-city-input
+                            value="${e.city || ""}"
+                        >
+                        <div class="city-dropdown-container"></div>
+                        </div>
                     </div>
 
-                </div>
+                    <div>
+                        <label>Тип занятости</label>
+
+                        <div class="select-input-wrapper" data-exp-type="${e.id}">
+                            <input 
+                                type="text"
+                                class="field-input select-input"
+                                value="${e.employment_type ? employmentTypeLabel(e.employment_type) : ''}"
+                                placeholder="Не указано"
+                                readonly
+                            >
+                            <span class="select-input-arrow"></span>
+
+                            <div class="select-input-dropdown">
+                                <div class="select-option" data-value="">Не указано</div>
+                                <div class="select-option" data-value="full_time">Полная занятость</div>
+                                <div class="select-option" data-value="part_time">Частичная занятость</div>
+                                <div class="select-option" data-value="contract">Контракт</div>
+                                <div class="select-option" data-value="internship">Стажировка</div>
+                                <div class="select-option" data-value="freelance">Фриланс</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="editor-grid-2">

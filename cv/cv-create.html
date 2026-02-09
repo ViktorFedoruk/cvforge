@@ -136,7 +136,7 @@
 
             <div class="form-field">
             <label>Телефон</label>
-            <input id="profilePhone" placeholder="+375 ..." />
+            <input id="profilePhone" placeholder="+ ..." />
             <div class="error-msg"></div>
             </div>
 
@@ -156,7 +156,7 @@
             </button>
 
             <!-- DROPDOWN -->
-            <div id="extraContactDropdown" class="extra-contact-dropdown hidden">
+            <div id="extraContactDropdown" class="extra-contact-dropdown">
                 <div data-type="telegram">Telegram</div>
                 <div data-type="github">GitHub</div>
                 <div data-type="website">Website</div>
@@ -216,12 +216,12 @@
 
       <div id="experienceList" class="cards-list"></div>
 
-      <button id="addExperienceBtn" class="btn-secondary mt-16">Добавить место работы</button>
+      <button id="addExperienceBtn" class="btn-secondary btn-right">Добавить место работы</button>
 
       <template id="experienceTemplate">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Новое место работы</span>
+            <span class="card-title">Место работы</span>
             <button class="icon-btn card-delete-btn">✕</button>
           </div>
 
@@ -233,11 +233,11 @@
 
             <!-- LOCATION WITH AUTOCOMPLETE -->
             <div class="form-field">
-                <label>Город/Локация</label>
-                <div class="city-input-wrapper">
-                    <input data-field="city" class="edu-city" placeholder="Город, Страна" autocomplete="off" />
-                    <div class="city-dropdown-container"></div>
-                </div>
+              <label>Город/Локация</label>
+              <div class="city-input-wrapper">
+                <input data-field="city" class="edu-city" placeholder="Город, Страна" autocomplete="off" />
+                <div class="city-dropdown-container"></div>
+              </div>
             </div>
 
             <div class="form-field">
@@ -245,24 +245,58 @@
               <input data-field="position" placeholder="Например: QA Engineer" />
             </div>
 
+            <div class="form-field">
+              <label>Тип занятости</label>
+
+              <div class="custom-select" data-field="employment_type">
+                <div class="custom-select-trigger">
+                  <span class="custom-select-value">Не указано</span>
+                  <span class="custom-select-arrow"></span>
+                </div>
+
+                <div class="custom-select-dropdown">
+                  <div class="custom-option" data-value="">Не указано</div>
+                  <div class="custom-option" data-value="full_time">Полная занятость</div>
+                  <div class="custom-option" data-value="part_time">Частичная занятость</div>
+                  <div class="custom-option" data-value="contract">Контракт</div>
+                  <div class="custom-option" data-value="internship">Стажировка</div>
+                  <div class="custom-option" data-value="freelance">Фриланс</div>
+                </div>
+              </div>
+            </div>
+
             <div class="form-field" data-field="start_date">
-                <label>Дата начала<span class="required">*</span></label>
-                <input data-field="start_date" type="date" />
+              <label>Дата начала<span class="required">*</span></label>
+              <input data-field="start_date" type="date" />
             </div>
 
             <div class="form-field" data-field="end_date">
-                <label>Дата окончания<span class="required">*</span></label>
-                <input data-field="end_date" type="date" />
+              <label>Дата окончания</label>
+              <input data-field="end_date" type="date" />
 
-                <label class="checkbox checkbox-inline">
-                    <input type="checkbox" data-field="current" />
-                    <span>Работаю здесь сейчас</span>
-                </label>
+              <label class="checkbox checkbox-inline">
+                <input type="checkbox" data-field="current" />
+                <span>Работаю здесь сейчас</span>
+              </label>
             </div>
 
             <div class="form-field full">
               <label>Описание / обязанности</label>
               <textarea data-field="description" rows="3" placeholder="Кратко опиши, чем занимался."></textarea>
+            </div>
+
+            <div class="form-field full">
+              <label>Технологии (опционально)</label>
+              <input data-field="technologies" placeholder="Например: React, Node.js, PostgreSQL" />
+            </div>
+
+            <div class="form-field full">
+              <label>Проекты / ключевые результаты (опционально)</label>
+              <textarea
+                data-field="projects"
+                rows="2"
+                placeholder="Например: Запустил новый модуль отчётности, сократил время регресса на 30%."
+              ></textarea>
             </div>
           </div>
         </div>
@@ -308,7 +342,7 @@
 
         <div id="educationList" class="cards-list"></div>
 
-        <button id="addEducationBtn" class="btn-secondary mt-16">
+        <button id="addEducationBtn" class="btn-secondary btn-right">
             Добавить образование / курс
         </button>
 
@@ -452,8 +486,10 @@
 
 </div>
 
+<script src="https://unpkg.com/morphdom/dist/morphdom-umd.min.js"></script>
 <script src="https://unpkg.com/imask"></script>
 
+<script src="/js/validation.js"></script>
 <script type="module">
   import { initGlobalHeader } from "/js/header.js";
   import "/js/cv-create.js";

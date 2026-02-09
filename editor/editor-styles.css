@@ -1092,6 +1092,80 @@ textarea {
   font-weight: 700;
 }
 
+/* =====================================================
+   SELECT INPUT — MATCH FIELD-INPUT
+===================================================== */
+
+.select-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-input {
+  cursor: pointer;
+  padding-right: 44px; /* место под стрелку */
+}
+
+.select-input-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #6b7280;
+
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.select-input-wrapper.active .select-input-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* DROPDOWN */
+.select-input-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+
+  border: 1.5px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: 0.2s ease;
+  z-index: 50;
+}
+
+.select-input-wrapper.active .select-input-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* OPTION */
+.select-option {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.select-option:hover {
+  background: #eef2ff;
+  color: var(--primary);
+}
+
 /* ========================================================
    SKILLS — EDITOR VERSION (PREMIUM STYLE)
 ======================================================== */

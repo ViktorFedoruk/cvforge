@@ -43,12 +43,6 @@ function getValue(field) {
   return el ? el.value.trim() : "";
 }
 
-/* То же самое, но без trim (для textarea, если нужно сохранить переносы) */
-function getTextarea(field) {
-  const el = document.querySelector(`[data-field="${field}"]`);
-  return el ? el.value : "";
-}
-
 /* Старый механизм для опыт/образование (data-exp-company="ID") */
 function getInput(selector) {
   return document.querySelector(`[${selector}]`)?.value || "";
@@ -409,7 +403,7 @@ function attachJobTitleAutocomplete(inputEl) {
 
 let dp = null;
 let dpTargetInput = null;
-let dpDate = new Date();
+let dpDate = null; // теперь null, чтобы понимать "нет выбранной даты"
 
 const monthsRU = [
   "Январь","Февраль","Март","Апрель","Май","Июнь",
@@ -423,6 +417,11 @@ function openMenu(menu) {
     if (m !== menu) m.classList.add("hidden");
   });
   menu.classList.toggle("hidden");
+
+  // Если открываем меню годов — скроллим к нужному году
+  if (menu.classList.contains("gdp-year-menu") && !menu.classList.contains("hidden")) {
+    scrollYearMenu(menu);
+  }
 }
 
 function closeAllMenus() {
@@ -433,6 +432,22 @@ document.addEventListener("click", (e) => {
   if (!e.target.closest(".gdp-dropdown")) closeAllMenus();
 });
 
+/* --------------------------------------------------------
+   Скролл к текущему или выбранному году
+-------------------------------------------------------- */
+function scrollYearMenu(yearMenu) {
+  const activeItem = yearMenu.querySelector(".gdp-menu-item.active");
+  if (!activeItem) return;
+
+  requestAnimationFrame(() => {
+    const offset = activeItem.offsetTop - yearMenu.clientHeight / 2 + activeItem.clientHeight / 2;
+    yearMenu.scrollTop = Math.max(offset, 0);
+  });
+}
+
+/* --------------------------------------------------------
+   РЕНДЕР КАЛЕНДАРЯ
+-------------------------------------------------------- */
 function renderGlassDatepicker() {
   const daysEl = dp.querySelector(".gdp-days");
   const weekdaysEl = dp.querySelector(".gdp-weekdays");
@@ -445,27 +460,49 @@ function renderGlassDatepicker() {
 
   weekdaysEl.innerHTML = weekdaysRU.map(d => `<div>${d}</div>`).join("");
 
-  monthBtn.textContent = monthsRU[dpDate.getMonth()];
-  yearBtn.textContent = dpDate.getFullYear();
+  /* -----------------------------
+     Определяем dpDate
+  ------------------------------ */
+  if (!dpDate) {
+    // если даты нет — используем текущую
+    dpDate = new Date();
+  }
 
+  const selectedYear = dpDate.getFullYear();
+  const selectedMonth = dpDate.getMonth();
+
+  monthBtn.textContent = monthsRU[selectedMonth];
+  yearBtn.textContent = selectedYear;
+
+  /* -----------------------------
+     Месяцы
+  ------------------------------ */
   monthMenu.innerHTML = monthsRU
     .map((m, i) => `
-      <div class="gdp-menu-item ${i === dpDate.getMonth() ? "active" : ""}" data-month="${i}">
+      <div class="gdp-menu-item ${i === selectedMonth ? "active" : ""}" data-month="${i}">
         ${m}
       </div>
     `)
     .join("");
 
+  /* -----------------------------
+     Годы
+  ------------------------------ */
   const currentYear = new Date().getFullYear();
   let yearsHTML = "";
-  for (let y = currentYear - 50; y <= currentYear + 50; y++) {
+
+  for (let y = currentYear - 50; y <= currentYear + 0; y++) {
     yearsHTML += `
-      <div class="gdp-menu-item ${y === dpDate.getFullYear() ? "active" : ""}" data-year="${y}">
+      <div class="gdp-menu-item ${y === selectedYear ? "active" : ""}" data-year="${y}">
         ${y}
       </div>`;
   }
+
   yearMenu.innerHTML = yearsHTML;
 
+  /* -----------------------------
+     Обработчики выбора месяца/года
+  ------------------------------ */
   monthMenu.querySelectorAll(".gdp-menu-item").forEach(item => {
     item.onclick = () => {
       dpDate.setMonth(Number(item.dataset.month));
@@ -485,8 +522,11 @@ function renderGlassDatepicker() {
   monthBtn.onclick = () => openMenu(monthMenu);
   yearBtn.onclick = () => openMenu(yearMenu);
 
-  const firstDay = new Date(dpDate.getFullYear(), dpDate.getMonth(), 1);
-  const lastDay = new Date(dpDate.getFullYear(), dpDate.getMonth() + 1, 0);
+  /* -----------------------------
+     Дни месяца
+  ------------------------------ */
+  const firstDay = new Date(selectedYear, selectedMonth, 1);
+  const lastDay = new Date(selectedYear, selectedMonth + 1, 0);
 
   const startOffset = (firstDay.getDay() + 6) % 7;
 
@@ -495,8 +535,8 @@ function renderGlassDatepicker() {
   for (let i = 0; i < startOffset; i++) html += `<div></div>`;
 
   for (let d = 1; d <= lastDay.getDate(); d++) {
-    const yyyy = dpDate.getFullYear();
-    const mm = String(dpDate.getMonth() + 1).padStart(2, "0");
+    const yyyy = selectedYear;
+    const mm = String(selectedMonth + 1).padStart(2, "0");
     const dd = String(d).padStart(2, "0");
 
     const iso = `${yyyy}-${mm}-${dd}`;
@@ -527,6 +567,9 @@ function renderGlassDatepicker() {
   });
 }
 
+/* --------------------------------------------------------
+   ПОДКЛЮЧЕНИЕ К ИНПУТУ
+-------------------------------------------------------- */
 function attachGlassDatepicker(input, onSelect) {
   input.type = "text";
   input.placeholder = "ДД.ММ.ГГГГ";
@@ -563,19 +606,24 @@ function attachGlassDatepicker(input, onSelect) {
 
     dpTargetInput = input;
 
+    // Если в инпуте есть дата — используем её
+    if (/^\d{2}\.\d{2}\.\d{4}$/.test(input.value)) {
+      const [dd, mm, yyyy] = input.value.split(".");
+      dpDate = new Date(`${yyyy}-${mm}-${dd}`);
+    } else {
+      dpDate = null; // нет выбранной даты → используем текущую
+    }
+
     const rect = input.getBoundingClientRect();
     const dpRect = dp.getBoundingClientRect();
 
-    // Базовая позиция — под инпутом
     let top = rect.bottom + window.scrollY + 8;
     let left = rect.left + window.scrollX;
 
-    // Если календарь выходит за правый край — сдвигаем влево
     if (left + dpRect.width > window.scrollX + window.innerWidth - 10) {
       left = window.scrollX + window.innerWidth - dpRect.width - 10;
     }
 
-    // Если выходит за нижний край — показываем над инпутом
     if (top + dpRect.height > window.scrollY + window.innerHeight - 10) {
       top = rect.top + window.scrollY - dpRect.height - 8;
     }
@@ -614,6 +662,21 @@ document.addEventListener("mousedown", (e) => {
   }
 });
 
+/* -------------------------------------------------------
+   CUSTOM SELECT — EDITOR VERSION
+------------------------------------------------------- */
+window.employmentTypeLabel = function(value) {
+  const map = {
+    "": "Не указано",
+    full_time: "Полная занятость",
+    part_time: "Частичная занятость",
+    contract: "Контракт",
+    internship: "Стажировка",
+    freelance: "Фриланс"
+  };
+  return map[value] || "Не указано";
+};
+
 /* ========================================================
    AVATAR UPLOAD + CROP (EDITOR VERSION)
 ======================================================== */
@@ -648,8 +711,6 @@ function resetAvatarEditor() {
   }
 
   cvData.cv_profile.avatar_url = null;
-
-  // очищаем кэш
   localStorage.removeItem("cv_avatar");
 
   updateAvatarButtonsEditor(false);
@@ -682,24 +743,28 @@ function attachAvatarEditorEvents() {
 
     const allowed = ["image/jpeg", "image/png", "image/webp"];
     if (!allowed.includes(file.type)) {
-      avatarErrorEl.textContent = "Можно загружать только JPG, PNG или WEBP.";
+      if (avatarErrorEl) {
+        avatarErrorEl.textContent = "Можно загружать только JPG, PNG или WEBP.";
+      }
       avatarFileInput.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      avatarErrorEl.textContent = "Размер файла не должен превышать 5MB.";
+      if (avatarErrorEl) {
+        avatarErrorEl.textContent = "Размер файла не должен превышать 5MB.";
+      }
       avatarFileInput.value = "";
       return;
     }
 
-    avatarErrorEl.textContent = "";
+    if (avatarErrorEl) avatarErrorEl.textContent = "";
     openAvatarCropperModalEditor(file);
   };
 }
 
 /* -------------------------------------------------------
-   МОДАЛКА КРОППЕРА
+   МОДАЛКА КРОППЕРА (EDITOR)
 ------------------------------------------------------- */
 function openAvatarCropperModalEditor(file) {
   const modal = document.getElementById("avatarCropModal");
@@ -708,7 +773,7 @@ function openAvatarCropperModalEditor(file) {
   const cancelBtn = document.getElementById("avatarCancel");
   const applyBtn = document.getElementById("avatarApply");
 
-  if (!modal || !cropArea) return;
+  if (!modal || !cropArea || !zoomInput || !cancelBtn || !applyBtn) return;
 
   modal.style.display = "flex";
   cropArea.innerHTML = "";
@@ -723,37 +788,71 @@ function openAvatarCropperModalEditor(file) {
   const img = document.createElement("img");
   img.src = avatarObjectUrl;
   img.style.position = "absolute";
+  img.style.top = "0";
+  img.style.left = "0";
   img.style.transformOrigin = "top left";
   cropArea.appendChild(img);
 
   let zoom = 1;
+  let minZoom = 1;
   let imgX = 0;
   let imgY = 0;
-  let dragging = false;
-  let lastX = 0;
-  let lastY = 0;
-
-  img.onload = () => {
-    const rect = cropArea.getBoundingClientRect();
-    const scale = Math.min(rect.width / img.naturalWidth, rect.height / img.naturalHeight);
-
-    zoom = scale;
-    zoomInput.value = zoom.toFixed(2);
-
-    imgX = (rect.width - img.naturalWidth * zoom) / 2;
-    imgY = (rect.height - img.naturalHeight * zoom) / 2;
-
-    updateTransform();
-  };
 
   function updateTransform() {
     img.style.transform = `translate(${imgX}px, ${imgY}px) scale(${zoom})`;
   }
 
+  function clampPosition() {
+    const areaRect = cropArea.getBoundingClientRect();
+    const imgW = img.naturalWidth * zoom;
+    const imgH = img.naturalHeight * zoom;
+
+    const circleSize = 240;
+    const half = circleSize / 2;
+
+    const centerX = areaRect.width / 2;
+    const centerY = areaRect.height / 2;
+
+    const leftLimit = centerX - half;
+    const rightLimit = centerX + half;
+    const topLimit = centerY - half;
+    const bottomLimit = centerY + half;
+
+    const imgLeft = imgX;
+    const imgRight = imgX + imgW;
+    const imgTop = imgY;
+    const imgBottom = imgY + imgH;
+
+    if (imgLeft > leftLimit) imgX = leftLimit;
+    if (imgTop > topLimit) imgY = topLimit;
+    if (imgRight < rightLimit) imgX = rightLimit - imgW;
+    if (imgBottom < bottomLimit) imgY = bottomLimit - imgH;
+  }
+
+  img.onload = () => {
+    const rect = cropArea.getBoundingClientRect();
+
+    const minW = 240 / img.naturalWidth;
+    const minH = 240 / img.naturalHeight;
+    minZoom = Math.max(minW, minH);
+
+    const scale = Math.min(rect.width / img.naturalWidth, rect.height / img.naturalHeight);
+
+    zoom = Math.max(scale, minZoom);
+    zoomInput.value = zoom.toFixed(2);
+    zoomInput.min = minZoom;
+
+    imgX = (rect.width - img.naturalWidth * zoom) / 2;
+    imgY = (rect.height - img.naturalHeight * zoom) / 2;
+
+    clampPosition();
+    updateTransform();
+  };
+
   cropArea.onwheel = e => {
     e.preventDefault();
     const delta = e.deltaY < 0 ? 0.1 : -0.1;
-    const newZoom = Math.min(Math.max(zoom + delta, 0.2), 5);
+    const newZoom = Math.min(Math.max(zoom + delta, minZoom), 5);
 
     const rect = cropArea.getBoundingClientRect();
     const cx = e.clientX - rect.left;
@@ -768,11 +867,17 @@ function openAvatarCropperModalEditor(file) {
     imgX = cx - px * zoom;
     imgY = cy - py * zoom;
 
+    clampPosition();
     updateTransform();
   };
 
   zoomInput.oninput = () => {
-    const newZoom = parseFloat(zoomInput.value);
+    let newZoom = parseFloat(zoomInput.value);
+    if (newZoom < minZoom) {
+      zoomInput.value = minZoom;
+      return;
+    }
+
     const rect = cropArea.getBoundingClientRect();
     const cx = rect.width / 2;
     const cy = rect.height / 2;
@@ -785,13 +890,16 @@ function openAvatarCropperModalEditor(file) {
     imgX = cx - px * zoom;
     imgY = cy - py * zoom;
 
+    clampPosition();
     updateTransform();
   };
 
   let isMouseDown = false;
+  let lastX = 0;
+  let lastY = 0;
 
   cropArea.addEventListener("mousedown", e => {
-    e.preventDefault(); // не даём браузеру начать drag/selection
+    e.preventDefault();
     isMouseDown = true;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -810,6 +918,7 @@ function openAvatarCropperModalEditor(file) {
     lastX = e.clientX;
     lastY = e.clientY;
 
+    clampPosition();
     updateTransform();
   });
 
@@ -841,11 +950,24 @@ function openAvatarCropperModalEditor(file) {
 
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    ctx.closePath();
     ctx.clip();
 
-    ctx.drawImage(img, srcX, srcY, size / zoom, size / zoom, 0, 0, size, size);
+    ctx.drawImage(
+      img,
+      srcX,
+      srcY,
+      size / zoom,
+      size / zoom,
+      0,
+      0,
+      size,
+      size
+    );
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/png")
+    );
 
     modal.style.display = "none";
     await saveAvatarEditor(blob);
@@ -853,7 +975,7 @@ function openAvatarCropperModalEditor(file) {
 }
 
 /* ========================================================
-   AVATAR CACHE FOR EDITOR
+   AVATAR CACHE FOR EDITOR — FIXED (URL‑scoped)
 ======================================================== */
 
 async function blobToBase64Editor(blob) {
@@ -870,12 +992,11 @@ function setEditorAvatarSrc(base64) {
 }
 
 async function loadAvatarWithCacheEditor(url) {
-  if (!url) {
-    localStorage.removeItem("cv_avatar");
-    return;
-  }
+  if (!url) return;
 
-  const cached = JSON.parse(localStorage.getItem("cv_avatar") || "{}");
+  // 🔑 Привязываем кэш к конкретному URL (а значит — к конкретному резюме)
+  const cacheKey = `cv_avatar_${url}`;
+  const cached = JSON.parse(localStorage.getItem(cacheKey) || "{}");
 
   // 1. Показываем кэш мгновенно
   if (cached.base64) {
@@ -898,11 +1019,16 @@ async function loadAvatarWithCacheEditor(url) {
     const blob = await fetch(url).then(r => r.blob());
     const base64 = await blobToBase64Editor(blob);
 
-    localStorage.setItem("cv_avatar", JSON.stringify({
-      base64,
-      eTag: newETag
-    }));
+    // 4. Обновляем кэш (теперь уникальный для каждого URL)
+    localStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        base64,
+        eTag: newETag
+      })
+    );
 
+    // 5. Обновляем UI
     setEditorAvatarSrc(base64);
   } catch {}
 }
@@ -911,11 +1037,21 @@ async function loadAvatarWithCacheEditor(url) {
    СОХРАНЕНИЕ В SUPABASE
 ------------------------------------------------------- */
 async function saveAvatarEditor(blob) {
-  const fileName = `${cvId}/avatar_${Date.now()}.png`;
+  // 1. Получаем cvId из редактора
+  const cvId = cvData?.cv?.id;
+  if (!cvId) {
+    console.error("saveAvatarEditor: cvId not found");
+    return;
+  }
 
+  // 2. Формируем путь
+  const fileName = `avatar_${Date.now()}.png`;
+  const filePath = `${cvId}/${fileName}`;
+
+  // 3. Загружаем файл
   const { error } = await supabase.storage
     .from("avatars")
-    .upload(fileName, blob, { upsert: true });
+    .upload(filePath, blob, { upsert: true });
 
   if (error) {
     console.error("Avatar upload error:", error);
@@ -923,22 +1059,23 @@ async function saveAvatarEditor(blob) {
     return;
   }
 
+  // 4. Получаем публичный URL
   const publicUrl = supabase.storage
     .from("avatars")
-    .getPublicUrl(fileName).data.publicUrl;
+    .getPublicUrl(filePath).data.publicUrl;
 
+  // 5. Обновляем данные резюме
   cvData.cv_profile.avatar_url = publicUrl;
 
-  // 1. Конвертируем blob → base64
+  // 6. Конвертируем blob → base64 для локального кэша
   const base64 = await blobToBase64Editor(blob);
 
-  // 2. Обновляем кэш
   localStorage.setItem("cv_avatar", JSON.stringify({
     base64,
-    eTag: null // заставим обновиться при следующем заходе
+    eTag: null
   }));
 
-  // 3. Обновляем UI
+  // 7. Обновляем UI
   const preview = document.getElementById("avatar_preview");
   if (preview) {
     preview.innerHTML = `<img class="editor-avatar-img" src="${base64}" alt="avatar">`;
@@ -1006,6 +1143,9 @@ function attachExperienceEditorEvents(root) {
           start_date: null,
           end_date: null,
           description: "",
+          technologies: "",
+          projects: "",
+          employment_type: "",
           current: false,
           order_index: cvData.experience.length
         })
@@ -1022,7 +1162,7 @@ function attachExperienceEditorEvents(root) {
   ------------------------------ */
   root.querySelectorAll("[data-delete-exp]").forEach(btn => {
     btn.onclick = async () => {
-      const id = Number(btn.dataset.deleteExp);
+      const id = btn.dataset.deleteExp;
 
       await supabase.from("experience").delete().eq("id", id);
       cvData.experience = cvData.experience.filter(e => e.id !== id);
@@ -1037,25 +1177,84 @@ function attachExperienceEditorEvents(root) {
   root.querySelectorAll("[data-exp-company]").forEach(input => {
     input.oninput = () => {
       const id = input.dataset.expCompany;
-      const item = cvData.experience.find(e => e.id === id);
-      item.company = input.value;
+      cvData.experience.find(e => e.id === id).company = input.value;
     };
   });
 
   root.querySelectorAll("[data-exp-position]").forEach(input => {
     input.oninput = () => {
       const id = input.dataset.expPosition;
-      const item = cvData.experience.find(e => e.id === id);
-      item.position = input.value;
+      cvData.experience.find(e => e.id === id).position = input.value;
     };
   });
 
   root.querySelectorAll("[data-exp-description]").forEach(input => {
     input.oninput = () => {
       const id = input.dataset.expDescription;
-      const item = cvData.experience.find(e => e.id === id);
-      item.description = input.value;
+      cvData.experience.find(e => e.id === id).description = input.value;
     };
+  });
+
+  /* -----------------------------
+     Новые поля: technologies
+  ------------------------------ */
+  root.querySelectorAll("[data-exp-tech]").forEach(input => {
+    input.oninput = () => {
+      const id = input.dataset.expTech;
+      cvData.experience.find(e => e.id === id).technologies = input.value;
+    };
+  });
+
+  /* -----------------------------
+     Новые поля: projects
+  ------------------------------ */
+  root.querySelectorAll("[data-exp-projects]").forEach(input => {
+    input.oninput = () => {
+      const id = input.dataset.expProjects;
+      cvData.experience.find(e => e.id === id).projects = input.value;
+    };
+  });
+
+  /* -----------------------------
+    Тип занятости — новый селект
+  ------------------------------ */
+  root.querySelectorAll("[data-exp-type]").forEach(wrapper => {
+    const id = wrapper.dataset.expType;
+    const item = cvData.experience.find(e => e.id === id);
+
+    const input = wrapper.querySelector(".select-input");
+    const dropdown = wrapper.querySelector(".select-input-dropdown");
+    const options = wrapper.querySelectorAll(".select-option");
+
+    function toggle() {
+      document.querySelectorAll(".select-input-wrapper.active")
+        .forEach(el => el.classList.remove("active"));
+      wrapper.classList.toggle("active");
+    }
+
+    input.addEventListener("click", e => {
+      e.stopPropagation();
+      toggle();
+    });
+
+    options.forEach(opt => {
+      opt.addEventListener("click", e => {
+        e.stopPropagation();
+
+        const val = opt.dataset.value;
+        item.employment_type = val;
+
+        input.value = employmentTypeLabel(val);
+
+        wrapper.classList.remove("active");
+      });
+    });
+  });
+
+  /* Закрытие всех селектов при клике вне */
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".select-input-wrapper.active")
+      .forEach(el => el.classList.remove("active"));
   });
 
   /* -----------------------------
@@ -1066,8 +1265,7 @@ function attachExperienceEditorEvents(root) {
 
     input.oninput = () => {
       const id = input.dataset.expCity;
-      const item = cvData.experience.find(e => e.id === id);
-      item.city = input.value;
+      cvData.experience.find(e => e.id === id).city = input.value;
     };
   });
 
@@ -1076,40 +1274,72 @@ function attachExperienceEditorEvents(root) {
   ------------------------------ */
   root.querySelectorAll("[data-exp-start]").forEach(input => {
     attachGlassDatepicker(input, iso => {
-      const id = Number(input.dataset.expStart);
-      const item = cvData.experience.find(e => e.id === id);
-      item.start_date = iso;
+      const id = input.dataset.expStart;
+      cvData.experience.find(e => e.id === id).start_date = iso;
     });
   });
 
   root.querySelectorAll("[data-exp-end]").forEach(input => {
     attachGlassDatepicker(input, iso => {
-      const id = Number(input.dataset.expEnd);
+      const id = input.dataset.expEnd;
       const item = cvData.experience.find(e => e.id === id);
+
       item.end_date = iso;
+
+      // Если выбрана дата окончания → снимаем чекбокс
+      const checkbox = root.querySelector(`[data-exp-current="${id}"]`);
+      if (checkbox) {
+        checkbox.checked = false;
+        item.current = false;
+
+        input.readOnly = false;
+        input.classList.remove("input-disabled");
+      }
     });
   });
 
   /* -----------------------------
      Чекбокс "Работаю здесь"
+     (фикс: readOnly вместо disabled)
   ------------------------------ */
   root.querySelectorAll("[data-exp-current]").forEach(checkbox => {
     checkbox.onchange = () => {
-      const id = Number(checkbox.dataset.expCurrent);
+      const id = checkbox.dataset.expCurrent;
       const item = cvData.experience.find(e => e.id === id);
+      const endInput = root.querySelector(`[data-exp-end="${id}"]`);
 
       item.current = checkbox.checked;
-
-      const endInput = root.querySelector(`[data-exp-end="${id}"]`);
 
       if (checkbox.checked) {
         item.end_date = null;
         endInput.value = "";
-        endInput.disabled = true;
+        endInput.readOnly = true;
+        endInput.classList.add("input-disabled");
       } else {
-        endInput.disabled = false;
+        endInput.readOnly = false;
+        endInput.classList.remove("input-disabled");
       }
     };
+  });
+
+  /* -----------------------------
+     Авто‑синхронизация:
+     если стерли дату окончания → current = true
+  ------------------------------ */
+  root.querySelectorAll("[data-exp-end]").forEach(input => {
+    input.addEventListener("input", () => {
+      const id = input.dataset.expEnd;
+      const item = cvData.experience.find(e => e.id === id);
+      const checkbox = root.querySelector(`[data-exp-current="${id}"]`);
+
+      if (!input.value.trim()) {
+        checkbox.checked = true;
+        item.current = true;
+
+        input.readOnly = true;
+        input.classList.add("input-disabled");
+      }
+    });
   });
 }
 
@@ -1458,7 +1688,11 @@ function enhanceEditorUI() {
 function renderEditor() {
   const topbar = document.getElementById("cvEditorTopbar");
 
-  topbar.innerHTML = `
+  /* -------------------------------------------------------
+     PATCH TOPBAR (childrenOnly → сохраняем .cv-topbar)
+  ------------------------------------------------------- */
+  const newTopbar = document.createElement("div");
+  newTopbar.innerHTML = `
     <div class="cv-topbar-left">
       <button id="backToView" class="topbar-btn">
         <i class="fas fa-arrow-left"></i> Назад
@@ -1476,9 +1710,23 @@ function renderEditor() {
     </div>
   `;
 
-  const root = document.getElementById("cvEditorContent");
-  root.innerHTML = generateCVEditorHTML(cvData);
+  morphdom(topbar, newTopbar, { childrenOnly: true });
 
+
+  /* -------------------------------------------------------
+     PATCH EDITOR CONTENT
+  ------------------------------------------------------- */
+  const root = document.getElementById("cvEditorContent");
+
+  const newRoot = document.createElement("div");
+  newRoot.innerHTML = generateCVEditorHTML(cvData);
+
+  morphdom(root, newRoot, { childrenOnly: true });
+
+
+  /* -------------------------------------------------------
+     REATTACH EDITOR LOGIC
+  ------------------------------------------------------- */
   attachAvatarEditorEvents();
 
   if (cvData.cv_profile.avatar_url) {
@@ -1492,12 +1740,300 @@ function renderEditor() {
   updateAvatarButtonsEditor(!!cvData.cv_profile.avatar_url);
 
   dp = document.getElementById("glassDatepicker");
+
   hideCityDropdown();
   hideUniversityDropdown();
   enhanceEditorUI();
+  attachEditorValidation();
 
+
+  /* -------------------------------------------------------
+     READY STATE
+  ------------------------------------------------------- */
   const wrapper = document.querySelector(".cv-editor-wrapper");
   if (wrapper) wrapper.classList.add("ready");
+}
+
+function attachEditorValidation() {
+  /* -------------------------------------------------------
+     0) Добавляем error-msg, если его нет
+  ------------------------------------------------------- */
+  document.querySelectorAll(".editor-section input, .editor-section textarea").forEach(input => {
+    const parent = input.parentElement;
+    if (!parent.querySelector(".error-msg")) {
+      const err = document.createElement("div");
+      err.className = "error-msg";
+      parent.appendChild(err);
+    }
+  });
+
+  /* -------------------------------------------------------
+     1) PROFILE — лимиты + live validation
+  ------------------------------------------------------- */
+  document.querySelectorAll("[data-field]").forEach(input => {
+    const key = input.dataset.field;
+
+    // Лимиты
+    if (key === "cv_profile.full_name") limitLength(input, 120);
+    if (key === "cv_profile.position") limitLength(input, 120);
+    if (key === "cv_profile.email") limitLength(input, 120);
+    if (key === "cv_profile.linkedin") limitLength(input, 100);
+    if (key === "cv_profile.summary") limitLength(input, 350);
+
+    // Контакты (все по 100)
+    const contactFields = [
+      "telegram", "github", "website",
+      "twitter", "instagram", "facebook",
+      "behance", "dribbble"
+    ];
+    contactFields.forEach(c => {
+      if (key === `cv_profile.${c}`) limitLength(input, 100);
+    });
+
+    // Телефон
+    if (key === "cv_profile.phone") sanitizePhone(input);
+
+    // Live validation
+    input.addEventListener("input", () => {
+      syncEditorData();
+      const errors = validateProfileData(cvData.cv_profile);
+
+      clearFieldError(input);
+
+      const fieldName = key.replace("cv_profile.", "");
+      const fieldErrors = errors.filter(e => e.toLowerCase().includes(fieldName));
+
+      if (fieldErrors.length > 0) {
+        showFieldError(input, fieldErrors[0]);
+      }
+    });
+  });
+
+  /* -------------------------------------------------------
+     2) ADVANTAGES — лимит 40 символов
+  ------------------------------------------------------- */
+  const advInput = document.getElementById("advantageInput");
+  if (advInput) {
+    limitLength(advInput, 40);
+  }
+
+  /* -------------------------------------------------------
+     3) SKILLS — лимит 25 символов на навык
+  ------------------------------------------------------- */
+  const skillInput = document.getElementById("skillNameInput");
+  if (skillInput) {
+    limitLength(skillInput, 25);
+  }
+
+  // Live validation навыков (при добавлении)
+  if (skillInput) {
+    skillInput.addEventListener("input", () => {
+      const val = skillInput.value.trim();
+      if (val.length > 25) {
+        showFieldError(skillInput, "Максимум 25 символов");
+      } else {
+        clearFieldError(skillInput);
+      }
+    });
+  }
+
+  /* -------------------------------------------------------
+     4) EXPERIENCE — лимиты + live validation
+  ------------------------------------------------------- */
+  document.querySelectorAll("[data-exp-company]").forEach(input => {
+    limitLength(input, 120);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  document.querySelectorAll("[data-exp-position]").forEach(input => {
+    limitLength(input, 120);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  document.querySelectorAll("[data-exp-city]").forEach(input => {
+    limitLength(input, 80);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  document.querySelectorAll("[data-exp-tech]").forEach(input => {
+    limitLength(input, 350);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  document.querySelectorAll("[data-exp-projects]").forEach(input => {
+    limitLength(input, 350);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  document.querySelectorAll("[data-exp-description]").forEach(input => {
+    limitLength(input, 350);
+    input.addEventListener("input", liveValidateExperience);
+  });
+
+  /* -------------------------------------------------------
+     5) EDUCATION — лимиты + live validation
+  ------------------------------------------------------- */
+  document.querySelectorAll("[data-edu-inst]").forEach(input => {
+    limitLength(input, 120);
+    input.addEventListener("input", liveValidateEducation);
+  });
+
+  document.querySelectorAll("[data-edu-degree]").forEach(input => {
+    limitLength(input, 120);
+    input.addEventListener("input", liveValidateEducation);
+  });
+
+  document.querySelectorAll("[data-edu-city]").forEach(input => {
+    limitLength(input, 80);
+    input.addEventListener("input", liveValidateEducation);
+  });
+
+  document.querySelectorAll("[data-edu-description]").forEach(input => {
+    limitLength(input, 350);
+    input.addEventListener("input", liveValidateEducation);
+  });
+}
+
+function liveValidateExperience() {
+  syncEditorData();
+  const errors = validateExperienceData(cvData.experience);
+
+  // очищаем все ошибки
+  document.querySelectorAll(
+    "[data-exp-company], [data-exp-position], [data-exp-city], [data-exp-description], [data-exp-tech], [data-exp-projects]"
+  ).forEach(input => clearFieldError(input));
+
+  errors.forEach(err => {
+    const match = err.match(/#(\d+)/);
+    if (!match) return;
+    const index = Number(match[1]) - 1;
+    const exp = cvData.experience[index];
+
+    if (err.includes("компанию")) {
+      const input = document.querySelector(`[data-exp-company="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("должность")) {
+      const input = document.querySelector(`[data-exp-position="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("город")) {
+      const input = document.querySelector(`[data-exp-city="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("технолог")) {
+      const input = document.querySelector(`[data-exp-tech="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("проект")) {
+      const input = document.querySelector(`[data-exp-projects="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("описание")) {
+      const input = document.querySelector(`[data-exp-description="${exp.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+  });
+}
+
+function liveValidateEducation() {
+  syncEditorData();
+  const errors = validateEducationData(cvData.education);
+
+  document.querySelectorAll(
+    "[data-edu-inst], [data-edu-degree], [data-edu-city], [data-edu-description]"
+  ).forEach(input => clearFieldError(input));
+
+  errors.forEach(err => {
+    const match = err.match(/#(\d+)/);
+    if (!match) return;
+    const index = Number(match[1]) - 1;
+    const ed = cvData.education[index];
+
+    if (err.includes("название")) {
+      const input = document.querySelector(`[data-edu-inst="${ed.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("значение")) {
+      const input = document.querySelector(`[data-edu-degree="${ed.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("город")) {
+      const input = document.querySelector(`[data-edu-city="${ed.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+    if (err.includes("описание")) {
+      const input = document.querySelector(`[data-edu-description="${ed.id}"]`);
+      if (input) showFieldError(input, err);
+    }
+  });
+}
+
+function syncEditorData() {
+  // -------------------------
+  // PROFILE
+  // -------------------------
+  const profile = cvData.cv_profile;
+
+  document.querySelectorAll("[data-field]").forEach(input => {
+    const key = input.dataset.field.replace("cv_profile.", "");
+    if (key in profile) {
+      profile[key] = input.value.trim();
+    }
+  });
+
+  // -------------------------
+  // ADVANTAGES
+  // -------------------------
+  cvData.advantages = cvData.advantages.map(a => ({
+    ...a,
+    tag: a.tag.trim()
+  }));
+
+  // -------------------------
+  // EXPERIENCE
+  // -------------------------
+  cvData.experience.forEach(exp => {
+    exp.company = getInput(`data-exp-company="${exp.id}"`);
+    exp.position = getInput(`data-exp-position="${exp.id}"`);
+    exp.city = getInput(`data-exp-city="${exp.id}"`);
+    exp.start_date = normalizeDate(getInput(`data-exp-start="${exp.id}"`));
+    exp.end_date = exp.current ? null : normalizeDate(getInput(`data-exp-end="${exp.id}"`));
+    exp.description = getInput(`data-exp-description="${exp.id}"`);
+    exp.technologies = getInput(`data-exp-tech="${exp.id}"`);
+    exp.projects = getInput(`data-exp-projects="${exp.id}"`);
+  });
+
+  // -------------------------
+  // EDUCATION
+  // -------------------------
+  cvData.education.forEach(ed => {
+    ed.institution = getInput(`data-edu-inst="${ed.id}"`);
+    ed.degree = getInput(`data-edu-degree="${ed.id}"`);
+    ed.city = getInput(`data-edu-city="${ed.id}"`);
+    ed.start_date = normalizeDate(getInput(`data-edu-start="${ed.id}"`));
+    ed.end_date = normalizeDate(getInput(`data-edu-end="${ed.id}"`));
+    ed.description = getInput(`data-edu-description="${ed.id}"`);
+  });
+
+  // -------------------------
+  // SKILLS
+  // -------------------------
+  const skillLevels = ["expert", "used", "familiar"];
+  cvData.skills = [];
+
+  skillLevels.forEach(level => {
+    const list = document.querySelector(`[data-skill-list="${level}"]`);
+    if (!list) return;
+
+    list.querySelectorAll(".skill-pill").forEach(pill => {
+      cvData.skills.push({
+        id: pill.dataset.skillId,
+        name: pill.querySelector("span").textContent.trim(),
+        level
+      });
+    });
+  });
 }
 
 /* -------------------------------------------------------
@@ -1506,6 +2042,24 @@ function renderEditor() {
 async function saveChanges() {
   const btn = document.getElementById("saveCvBtn");
   const btnText = btn?.querySelector("span");
+
+  // -----------------------------------------
+  // 1) Синхронизируем cvData с DOM
+  // -----------------------------------------
+  syncEditorData();
+
+  // -----------------------------------------
+  // 2) Валидируем
+  // -----------------------------------------
+  const errors = validateFullCV(cvData);
+  if (errors.length > 0) {
+    showToast(errors[0], "error");
+    return;
+  }
+
+  // -----------------------------------------
+  // 3) Только теперь сохраняем
+  // -----------------------------------------
 
   if (btn) {
     btn.classList.add("saving");
@@ -1532,7 +2086,7 @@ async function saveChanges() {
     ------------------------------ */
     const profileFields = [
       "full_name", "position", "summary", "email", "phone",
-      "location", "telegram", "github", "website",
+      "linkedin", "location", "telegram", "github", "website",
       "twitter", "instagram", "facebook", "behance", "dribbble"
     ];
 
@@ -1568,7 +2122,10 @@ async function saveChanges() {
         start_date: normalizeDate(getInput(`data-exp-start="${exp.id}"`)),
         end_date: exp.current ? null : normalizeDate(getInput(`data-exp-end="${exp.id}"`)),
         current: exp.current || false,
-        description: getInput(`data-exp-description="${exp.id}"`)
+        description: getInput(`data-exp-description="${exp.id}"`),
+        technologies: getInput(`data-exp-tech="${exp.id}"`), 
+        projects: getInput(`data-exp-projects="${exp.id}"`), 
+        employment_type: exp.employment_type || ""
       }).eq("id", exp.id);
     }
 
@@ -1677,6 +2234,9 @@ async function addItem(type) {
       end_date: null,
       current: false,
       description: "",
+      technologies: "",
+      projects: "",
+      employment_type: "",
       order_index: cvData.experience.length
     },
     education: {
@@ -1690,20 +2250,39 @@ async function addItem(type) {
     }
   };
 
+  // исправленный маппинг
   const table = {
     advantage: "advantages",
-    skills: "skills",
+    skill: "skills",
     experience: "experience",
     education: "education"
   }[type];
 
-  const { data } = await supabase
+  if (!table) {
+    console.error("addItem(): unknown type:", type);
+    return;
+  }
+
+  const { data, error } = await supabase
     .from(table)
     .insert(defaults[type])
     .select()
     .single();
 
-  cvData[type === "advantage" ? "advantages" : type].push(data);
+  if (error) {
+    console.error("Supabase insert error:", error);
+    return;
+  }
+
+  // корректный ключ для cvData
+  const key =
+    type === "advantage"
+      ? "advantages"
+      : type === "skill"
+      ? "skills"
+      : type;
+
+  cvData[key].push(data);
 
   renderEditor();
 }
@@ -1714,14 +2293,25 @@ async function addItem(type) {
 async function deleteItem(type, id) {
   const table = {
     advantage: "advantages",
-    skills: "skills",
+    skill: "skills",
     experience: "experience",
     education: "education"
   }[type];
 
+  if (!table) {
+    console.error("deleteItem(): unknown type:", type);
+    return;
+  }
+
   await supabase.from(table).delete().eq("id", id);
 
-  const key = type === "advantage" ? "advantages" : type;
+  const key =
+    type === "advantage"
+      ? "advantages"
+      : type === "skill"
+      ? "skills"
+      : type;
+
   cvData[key] = cvData[key].filter(item => item.id !== id);
 
   renderEditor();
@@ -1740,29 +2330,35 @@ function setupEvents() {
       saveChanges();
     }
 
-    // --- FIX: не вызываем addItem для advantages ---
+    // добавление элементов
     if (e.target.dataset.add) {
       const type = e.target.dataset.add;
+
+      // преимущества добавляются через другой механизм
       if (type !== "advantage") {
-        addItem(type);
+        addItem(type); // теперь type="skill" → работает
       }
     }
 
+    // удаление преимуществ
     if (e.target.closest("[data-delete-adv]")) {
       const btn = e.target.closest("[data-delete-adv]");
       deleteItem("advantage", btn.dataset.deleteAdv);
     }
 
+    // удаление навыков
     if (e.target.dataset.deleteSkill) {
-      deleteItem("skills", Number(e.target.dataset.deleteSkill));
+      deleteItem("skill", e.target.dataset.deleteSkill); // исправлено
     }
 
+    // удаление опыта
     if (e.target.dataset.deleteExp) {
-      deleteItem("experience", Number(e.target.dataset.deleteExp));
+      deleteItem("experience", e.target.dataset.deleteExp);
     }
 
+    // удаление образования
     if (e.target.dataset.deleteEdu) {
-      deleteItem("education", Number(e.target.dataset.deleteEdu));
+      deleteItem("education", e.target.dataset.deleteEdu);
     }
   });
 }
