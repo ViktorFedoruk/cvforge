@@ -17,8 +17,14 @@
     </div>
   </header>
 
+  <!-- PRELOADER -->
   <div id="pageLoader" class="page-loader">
-    <div class="loader-circle"></div>
+    <div class="loader-wrapper">
+      <div class="loader-ring">
+        <div class="loader-circle"></div>
+      </div>
+      <div class="loader-text">CVForge</div>
+    </div>
   </div>
 
 <div class="wizard-wrapper">
@@ -489,7 +495,6 @@
 <script src="https://unpkg.com/morphdom/dist/morphdom-umd.min.js"></script>
 <script src="https://unpkg.com/imask"></script>
 
-<script src="/js/validation.js"></script>
 <script type="module">
   import { initGlobalHeader } from "/js/header.js";
   import "/js/cv-create.js";

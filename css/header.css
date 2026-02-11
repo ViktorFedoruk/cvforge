@@ -1,5 +1,5 @@
 /* =========================================================
-   GLOBAL HEADER — Premium Neutral Ice Glass
+   GLOBAL HEADER — Premium Glass v2
 ========================================================= */
 
 .global-header {
@@ -7,266 +7,380 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 70px;
-  z-index: 10000; /* выше лоадера */
+  height: 76px;
+  z-index: 10000;
 
-  background: rgba(253, 253, 253, 0.5);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
 
-  border-bottom: 1px solid rgba(180, 180, 180, 0.35);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.45);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 2.4rem;
+
   box-sizing: border-box;
 
   box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 6px 28px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  transition: all 0.35s ease;
+}
+
+.global-header.scrolled {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(32px) saturate(220%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
 html {
   overflow-y: scroll;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", 
+  "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased; 
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Отступ под фиксированный хэдер */
 body {
   padding-top: 70px;
-  
 }
 
 /* =========================================================
-   LOGO
+   LOGO — Premium Gradient Text
 ========================================================= */
 
-.logo {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 1.55rem;
-  font-weight: 800;
+.logo,
+.logo * {
+  all: unset;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 1.7rem;
+  font-weight: 900;
   letter-spacing: -0.6px;
-  text-decoration: none;
 
-  /* Чистый глубокий цвет без градиентов */
-  color: #1c1f26;
+  background: linear-gradient(135deg, #1e293b, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 
-  /* Очень мягкая, почти незаметная подсветка */
-  text-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.35),
-    0 0 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  padding: 4px 0;
+}
 
-  /* Чуть более плотная посадка */
-  display: inline-block;
-  padding: 2px 0;
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  transition: width 0.35s ease;
+  border-radius: 1px;
+}
+
+.logo:hover::after {
+  width: 100%;
 }
 
 /* =========================================================
-   RIGHT SIDE
+   HEADER BUTTONS
 ========================================================= */
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
-/* Premium glass button */
 .header-btn {
-  padding: 0.55rem 1.1rem;
-  border-radius: 12px;
+  padding: 0.65rem 1.3rem;
+  border-radius: 14px;
 
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(200, 200, 200, 0.45);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(226, 232, 240, 0.55);
 
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-
+  backdrop-filter: blur(12px);
   cursor: pointer;
-  transition: 0.25s ease;
 
-  color: rgba(40, 40, 40, 0.85);
+  font-size: 15px;
   font-weight: 600;
+  color: #0f172a;
 
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: all 0.25s ease;
 }
 
 .header-btn:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(79, 70, 229, 0.35);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.18);
+}
+
+.header-btn.primary {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+}
+
+.header-btn.primary:hover {
+  background: linear-gradient(135deg, #4338ca, #3730a3);
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
 }
 
 /* =========================================================
-   AVATAR
+   AVATAR — Premium Glass Orb
 ========================================================= */
 
 .header-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
 
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(200, 200, 200, 0.45);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.6);
 
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-
+  backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
+  font-weight: 700;
+  color: #4f46e5;
 
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    0 4px 16px rgba(79, 70, 229, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.7);
 
-  transition: 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .header-avatar:hover {
-  background: rgba(255, 255, 255, 0.65);
-  transform: translateY(-2px) scale(1.05);
-}
-
-.header-avatar i {
-  font-size: 18px;
-  color: rgba(40, 40, 40, 0.75);
+  transform: translateY(-2px) scale(1.06);
+  box-shadow:
+    0 10px 32px rgba(79, 70, 229, 0.25),
+    inset 0 1px 3px rgba(255, 255, 255, 0.8);
 }
 
 /* =========================================================
-   PROFILE MENU — Smooth Glass Dropdown
+   PROFILE MENU
 ========================================================= */
 
 .profile-menu {
   position: absolute;
-  top: 72px;
+  top: 76px;
   right: 2rem;
 
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(200, 200, 200, 0.4);
+  width: 200px;
+  padding: 8px 0;
 
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
 
-  border-radius: 14px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
-
-  width: 190px;
-  padding: 0.5rem 0;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 16px;
 
   opacity: 0;
-  transform: translateY(-6px);
   pointer-events: none;
+  transform: translateY(-8px);
 
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: all 0.25s ease;
   z-index: 10001;
 }
 
 .profile-menu.active {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
+  transform: translateY(0);
 }
 
 .profile-menu-item {
-  padding: 0.8rem 1rem;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
   cursor: pointer;
-  font-size: 0.95rem;
-  color: rgba(40, 40, 40, 0.85);
-  transition: background 0.15s ease;
+  font-size: 15px;
+  color: #0f172a;
+
+  transition: all 0.2s ease;
 }
 
 .profile-menu-item:hover {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(248, 250, 252, 0.8);
+  color: #4f46e5;
 }
 
 .profile-menu-item.logout {
-  color: #d33;
+  color: #ef4444;
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 /* =========================================================
-   PAGE LOADER — Glass Pulse v5 (no aura ring)
+   PREMIUM LOADER — Clean Version with Inner Glow Circle
 ========================================================= */
 
 .page-loader {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(28px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   z-index: 9999;
-  opacity: 1;
-  pointer-events: auto;
-
-  transition: opacity 0.35s ease;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-loader.hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
 /* =========================================================
-   MAIN GLASS CIRCLE — clean, cold, breathing
+   WRAPPER
 ========================================================= */
-
-.loader-circle {
+.loader-wrapper {
   position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-
-  /* холодное, очень прозрачное стекло */
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-
-  /* мягкая тень под стеклом */
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.08);
-
-  animation: glassPulse 2.2s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 /* =========================================================
-   ANIMATION — breathing glass
+   OUTER GRADIENT RING
 ========================================================= */
+.loader-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
 
-@keyframes glassPulse {
-  0% {
-    transform: scale(0.82);
-    background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #4f46e5 0deg,
+    #06b6d4 180deg,
+    #4f46e5 360deg
+  );
+
+  animation: loaderRingSpin 1.8s linear infinite;
+
+  box-shadow:
+    0 0 0 1px rgba(79, 70, 229, 0.1),
+    0 0 20px rgba(79, 70, 229, 0.15);
+}
+
+/* Внутренняя маска */
+.loader-ring::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+@keyframes loaderRingSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   INNER GLOW CIRCLE — now centered perfectly
+========================================================= */
+.loader-circle {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  z-index: 2;
+
+  box-shadow:
+    0 0 18px rgba(79, 70, 229, 0.25),
+    0 0 28px rgba(6, 182, 212, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+
+  animation: smoothPulse 1.8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  transform-origin: center center;
+}
+
+@keyframes smoothPulse {
+  0%, 100% { 
+    transform: scale(0.95);
+    opacity: 0.92;
     box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.08),
-      0 0 0 rgba(0, 220, 255, 0.0);
+      0 0 17px rgba(79, 70, 229, 0.22),
+      0 0 26px rgba(6, 182, 212, 0.22),
+      inset 0 1px 2px rgba(255, 255, 255, 0.65);
   }
-
-  50% {
-    transform: scale(1.12);
-
-    /* стекло становится чуть ярче */
-    background: rgba(255, 255, 255, 0.22);
-
-    /* мягкое циановое свечение, но без кольца */
+  50% { 
+    transform: scale(1.2);
+    opacity: 1;
     box-shadow:
-      0 6px 18px rgba(0, 0, 0, 0.10),
-      0 0 150px rgba(0, 220, 255, 0.45);
+      0 0 22px rgba(79, 70, 229, 0.3),
+      0 0 34px rgba(6, 182, 212, 0.3),
+      inset 0 1px 3px rgba(255, 255, 255, 0.8);
   }
+}
 
-  100% {
-    transform: scale(0.82);
-    background: rgba(255, 255, 255, 0.14);
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.08),
-      0 0 0 rgba(0, 220, 255, 0.0);
-  }
+/* =========================================================
+   TEXT
+========================================================= */
+.loader-text {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+
+  background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .loader-ring { width: 64px; height: 64px; }
+  .loader-ring::before { inset: 6px; }
+  .loader-circle { width: 36px; height: 36px; }
+  .loader-text { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+  .loader-ring { width: 56px; height: 56px; }
+  .loader-circle { width: 32px; height: 32px; }
+  .loader-text { font-size: 18px; }
 }

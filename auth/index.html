@@ -18,8 +18,14 @@
     </div>
   </header>
 
+  <!-- PRELOADER -->
   <div id="pageLoader" class="page-loader">
-    <div class="loader-circle"></div>
+    <div class="loader-wrapper">
+      <div class="loader-ring">
+        <div class="loader-circle"></div>
+      </div>
+      <div class="loader-text">CVForge</div>
+    </div>
   </div>
 
   <main class="auth-wrapper">
@@ -53,7 +59,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         initGlobalHeader();
       });
-      
+
     import { login } from "/js/auth.js"; // если login у тебя в отдельном файле
 
     document.getElementById('loginBtn').onclick = async () => {

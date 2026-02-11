@@ -48,6 +48,278 @@ function getInput(selector) {
   return document.querySelector(`[${selector}]`)?.value || "";
 }
 
+/* ------------------------------------------------------------
+   VALIDATION UTILITIES (EDITOR)
+------------------------------------------------------------ */
+
+function limitLength(input, max) {
+  input.addEventListener("input", () => {
+    if (input.value.length > max) {
+      input.value = input.value.slice(0, max);
+    }
+  });
+}
+
+function sanitizePhone(input) {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^\d+()\-\s]/g, "");
+  });
+}
+
+function sanitizeContact(input) {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^\w\-./:@]/g, "");
+  });
+}
+
+function showFieldError(input, msg) {
+  const field = getEditorFieldContainer(input);
+  const err = field.querySelector(".error-msg");
+
+  if (err) err.textContent = msg;
+  field.classList.add("has-error");
+}
+
+function clearFieldError(input) {
+  const field = getEditorFieldContainer(input);
+  const err = field.querySelector(".error-msg");
+
+  if (err) err.textContent = "";
+  field.classList.remove("has-error");
+}
+
+/* ------------------------------------------------------------
+   DATA VALIDATION (EDITOR)
+------------------------------------------------------------ */
+
+function validateProfileData(profile) {
+  const errors = [];
+
+  if (!profile.full_name || !profile.full_name.trim()) {
+    errors.push({ field: "full_name", msg: "Введите имя и фамилию" });
+  }
+
+  if (!profile.position || !profile.position.trim()) {
+    errors.push({ field: "position", msg: "Введите желаемую должность" });
+  }
+
+  if (profile.email) {
+    if (profile.email.length > 120) {
+      errors.push({ field: "email", msg: "Email слишком длинный" });
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)) {
+      errors.push({ field: "email", msg: "Некорректный email" });
+    }
+  }
+
+  if (profile.phone) {
+    const digits = profile.phone.replace(/\D/g, "");
+    if (digits.length < 8 || digits.length > 15) {
+      errors.push({ field: "phone", msg: "Некорректный номер телефона" });
+    }
+  }
+
+  const contactFields = [
+    "telegram", "github", "website",
+    "twitter", "instagram", "facebook",
+    "behance", "dribbble"
+  ];
+
+  contactFields.forEach(key => {
+    if (profile[key] && profile[key].length > 100) {
+      errors.push({ field: key, msg: `Поле ${key} слишком длинное` });
+    }
+  });
+
+  if (profile.summary && profile.summary.length > 350) {
+    errors.push({ field: "summary", msg: "Описание слишком длинное (максимум 350 символов)" });
+  }
+
+  return errors;
+}
+
+function validateExperienceData(experienceList) {
+  const errors = [];
+
+  experienceList.forEach((exp, i) => {
+    const prefix = `exp_${i}`;
+
+    if (!exp.company || !exp.company.trim()) {
+      errors.push({ field: `${prefix}_company`, msg: `Опыт #${i + 1}: укажите компанию` });
+    }
+
+    if (!exp.position || !exp.position.trim()) {
+      errors.push({ field: `${prefix}_position`, msg: `Опыт #${i + 1}: укажите должность` });
+    }
+
+    if (!exp.start_date || !exp.start_date.trim()) {
+      errors.push({ field: `${prefix}_start`, msg: `Опыт #${i + 1}: укажите дату начала` });
+    }
+
+    const current = exp.current || !exp.end_date;
+
+    if (!current) {
+      if (!exp.end_date || !exp.end_date.trim()) {
+        errors.push({ field: `${prefix}_end`, msg: `Опыт #${i + 1}: укажите дату окончания` });
+      } else if (exp.start_date && exp.end_date < exp.start_date) {
+        errors.push({ field: `${prefix}_end`, msg: `Опыт #${i + 1}: дата окончания раньше начала` });
+      }
+    }
+  });
+
+  return errors;
+}
+
+function validateSkillsData(skills) {
+  const errors = [];
+
+  const levels = ["expert", "used", "familiar"];
+
+  levels.forEach(level => {
+    if (skills[level].length > 15) {
+      errors.push(`В секции "${level}" слишком много навыков (максимум 15)`);
+    }
+
+    skills[level].forEach(name => {
+      if (name.length > 30) {
+        errors.push(`Навык "${name}" слишком длинный (максимум 30 символов)`);
+      }
+    });
+  });
+
+  return errors;
+}
+
+function validateEducationData(educationList) {
+  const errors = [];
+
+  educationList.forEach((edu, i) => {
+    const prefix = `edu_${i}`;
+
+    if (edu.start_date && edu.end_date && edu.end_date < edu.start_date) {
+      errors.push({ field: `${prefix}_end`, msg: `Образование #${i + 1}: дата окончания раньше начала` });
+    }
+
+    if (edu.institution && edu.institution.length > 120) {
+      errors.push({ field: `${prefix}_inst`, msg: `Образование #${i + 1}: слишком длинное название` });
+    }
+  });
+
+  return errors;
+}
+
+function validateFullCV(cv) {
+  const errors = [];
+
+  // === NEW: validate CV title ===
+  if (!cv.title || !cv.title.trim()) {
+    errors.push({ field: "title", msg: "Введите название резюме" });
+  }
+
+  errors.push(...validateProfileData(cv.cv_profile));
+  errors.push(...validateExperienceData(cv.experience));
+
+  const skillsByLevel = {
+    expert: cv.skills.filter(s => s.level === "expert").map(s => s.name),
+    used: cv.skills.filter(s => s.level === "used").map(s => s.name),
+    familiar: cv.skills.filter(s => s.level === "familiar").map(s => s.name)
+  };
+  errors.push(...validateSkillsData(skillsByLevel));
+
+  errors.push(...validateEducationData(cv.education));
+
+  return errors;
+}
+
+function highlightEditorErrors(errors) {
+  console.log("🔥 highlightEditorErrors — входящие ошибки:", errors);
+
+  // Очистка
+  document.querySelectorAll(".editor-section .has-error").forEach(el => {
+    el.classList.remove("has-error");
+  });
+  document.querySelectorAll(".editor-section .error-msg").forEach(el => {
+    el.textContent = "";
+  });
+
+  if (!errors || errors.length === 0) return;
+
+  // === TITLE ===
+  const titleInput = document.querySelector('[data-field="cv.title"]');
+  if (titleInput) {
+    const err = errors.find(e => e.field === "title");
+    if (err) showFieldError(titleInput, err.msg);
+  }
+
+  // === PROFILE FIELDS ===
+  document.querySelectorAll("[data-field]").forEach(input => {
+    const key = input.dataset.field.replace("cv_profile.", "").replace("cv.", "");
+    const err = errors.find(e => e.field === key);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  // === EXPERIENCE ===
+  document.querySelectorAll("[data-exp-company]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `exp_${i}_company`);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  document.querySelectorAll("[data-exp-position]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `exp_${i}_position`);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  document.querySelectorAll("[data-exp-start]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `exp_${i}_start`);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  document.querySelectorAll("[data-exp-end]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `exp_${i}_end`);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  // === EDUCATION ===
+  document.querySelectorAll("[data-edu-inst]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `edu_${i}_inst`);
+    if (err) showFieldError(input, err.msg);
+  });
+
+  document.querySelectorAll("[data-edu-end]").forEach((input, i) => {
+    const err = errors.find(e => e.field === `edu_${i}_end`);
+    if (err) showFieldError(input, err.msg);
+  });
+}
+
+function getEditorFieldContainer(input) {
+  // 1) если есть .position-input-wrapper — используем его
+  if (input.closest(".position-input-wrapper")) {
+    return input.closest(".position-input-wrapper");
+  }
+
+  // 2) если есть .city-input-wrapper — используем его
+  if (input.closest(".city-input-wrapper")) {
+    return input.closest(".city-input-wrapper");
+  }
+
+  // 3) если есть .university-input-wrapper — используем его
+  if (input.closest(".university-input-wrapper")) {
+    return input.closest(".university-input-wrapper");
+  }
+
+  // 4) если поле внутри опыта
+  if (input.closest(".editor-exp-block")) {
+    return input.parentElement;
+  }
+
+  // 5) если поле внутри образования
+  if (input.closest(".editor-edu-block")) {
+    return input.parentElement;
+  }
+
+  // 6) fallback — обычный div
+  return input.parentElement;
+}
+
 /* ========================================================
    AUTO CAPITALIZE
 ======================================================== */
@@ -1347,9 +1619,8 @@ function attachExperienceEditorEvents(root) {
    SKILLS — EDITOR VERSION
 ======================================================== */
 
-/* -------------------------------------------------------
-   Подключение событий для блока навыков
-------------------------------------------------------- */
+let activeSkillLevel = "used"; // активная колонка по умолчанию
+
 function attachSkillsEditorEvents(root) {
 
   /* -----------------------------
@@ -1360,15 +1631,22 @@ function attachSkillsEditorEvents(root) {
 
   if (addBtn && input) {
     addBtn.onclick = async () => {
-      const name = input.value.trim();
-      if (!name) return;
+      const raw = input.value || "";
+      const name = raw.trim();
+      const placeholder = (input.placeholder || "").trim();
+
+      // защита от пустых значений и placeholder
+      if (!name || name === placeholder) {
+        input.value = "";
+        return;
+      }
 
       const { data, error } = await supabase
         .from("skills")
         .insert({
           cv_id: cvId,
           name,
-          level: "used"
+          level: activeSkillLevel   // ← добавляем в активную колонку
         })
         .select()
         .single();
@@ -1379,8 +1657,19 @@ function attachSkillsEditorEvents(root) {
       }
 
       cvData.skills.push(data);
+
+      input.value = "";
+
       renderEditor();
     };
+
+    // Enter → добавить
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addBtn.click();
+      }
+    });
   }
 
   /* -----------------------------
@@ -1388,7 +1677,7 @@ function attachSkillsEditorEvents(root) {
   ------------------------------ */
   root.querySelectorAll("[data-delete-skill]").forEach(btn => {
     btn.onclick = async () => {
-      const id = btn.dataset.deleteSkill; // UUID как строка
+      const id = btn.dataset.deleteSkill;
 
       await supabase.from("skills").delete().eq("id", id);
       cvData.skills = cvData.skills.filter(s => s.id !== id);
@@ -1403,12 +1692,10 @@ function attachSkillsEditorEvents(root) {
 
   let draggedSkillId = null;
 
-  /* начало перетаскивания */
   root.querySelectorAll(".skill-pill").forEach(pill => {
     pill.addEventListener("dragstart", e => {
-      draggedSkillId = pill.dataset.skillId; // UUID (строка)
+      draggedSkillId = pill.dataset.skillId;
       e.dataTransfer.effectAllowed = "move";
-
       pill.classList.add("dragging");
     });
 
@@ -1417,41 +1704,35 @@ function attachSkillsEditorEvents(root) {
       draggedSkillId = null;
 
       root.querySelectorAll(".skills-column").forEach(col =>
-        col.classList.remove("active")
+        col.classList.remove("active-drop")
       );
     });
   });
 
-  /* DROP на список навыков */
   root.querySelectorAll(".skills-list").forEach(list => {
     const column = list.closest(".skills-column");
 
     list.addEventListener("dragover", e => {
       e.preventDefault();
-      column.classList.add("active");
+      column.classList.add("active-drop");
     });
 
     list.addEventListener("dragleave", () => {
-      column.classList.remove("active");
+      column.classList.remove("active-drop");
     });
 
     list.addEventListener("drop", async e => {
       e.preventDefault();
-      column.classList.remove("active");
+      column.classList.remove("active-drop");
 
       if (!draggedSkillId) return;
 
-      const newLevel = list.dataset.skillList; // expert / used / familiar
+      const newLevel = list.dataset.skillList;
       const skill = cvData.skills.find(s => s.id === draggedSkillId);
 
-      if (!skill) {
-        console.warn("Skill not found in cvData:", draggedSkillId);
-        return;
-      }
-
+      if (!skill) return;
       if (skill.level === newLevel) return;
 
-      // обновляем в Supabase
       const { error } = await supabase
         .from("skills")
         .update({ level: newLevel })
@@ -1462,13 +1743,31 @@ function attachSkillsEditorEvents(root) {
         return;
       }
 
-      // обновляем локально
       skill.level = newLevel;
-
-      // перерендер
       renderEditor();
     });
   });
+
+  /* -----------------------------
+     Клик по колонке → активная
+  ------------------------------ */
+  root.querySelectorAll(".skills-column").forEach(col => {
+    col.addEventListener("click", () => {
+      activeSkillLevel = col.dataset.level;
+
+      root.querySelectorAll(".skills-column").forEach(c =>
+        c.classList.remove("active")
+      );
+
+      col.classList.add("active");
+    });
+  });
+
+  /* -----------------------------
+     Восстановление активной колонки после renderEditor()
+  ------------------------------ */
+  const activeCol = root.querySelector(`.skills-column[data-level="${activeSkillLevel}"]`);
+  if (activeCol) activeCol.classList.add("active");
 }
 
 /* ========================================================
@@ -1719,6 +2018,14 @@ function renderEditor() {
   const root = document.getElementById("cvEditorContent");
 
   const newRoot = document.createElement("div");
+  cvData.skills = (cvData.skills || []).filter(s => {
+    if (!s) return false;
+    const name = (s.name || "").trim();
+    if (!name) return false;
+    if (name === "Новый навык") return false; // выкидываем плейсхолдер
+    return true;
+  });
+
   newRoot.innerHTML = generateCVEditorHTML(cvData);
 
   morphdom(root, newRoot, { childrenOnly: true });
@@ -1780,7 +2087,6 @@ function attachEditorValidation() {
     if (key === "cv_profile.linkedin") limitLength(input, 100);
     if (key === "cv_profile.summary") limitLength(input, 350);
 
-    // Контакты (все по 100)
     const contactFields = [
       "telegram", "github", "website",
       "twitter", "instagram", "facebook",
@@ -1790,22 +2096,27 @@ function attachEditorValidation() {
       if (key === `cv_profile.${c}`) limitLength(input, 100);
     });
 
-    // Телефон
     if (key === "cv_profile.phone") sanitizePhone(input);
 
-    // Live validation
+    // === NEW LIVE VALIDATION ===
     input.addEventListener("input", () => {
       syncEditorData();
-      const errors = validateProfileData(cvData.cv_profile);
+
+      const profileErrors = validateProfileData(cvData.cv_profile);
+
+      const titleValue = cvData.title ?? cvData.cv?.title ?? "";
+      const titleErrors = (!cvData.title || !cvData.title.trim())
+        ? [{ field: "title", msg: "Введите название резюме" }]
+        : [];
+
+      const errors = [...profileErrors, ...titleErrors];
 
       clearFieldError(input);
 
-      const fieldName = key.replace("cv_profile.", "");
-      const fieldErrors = errors.filter(e => e.toLowerCase().includes(fieldName));
+      const fieldName = key.replace("cv_profile.", "").replace("cv.", "");
+      const err = errors.find(e => e.field === fieldName);
 
-      if (fieldErrors.length > 0) {
-        showFieldError(input, fieldErrors[0]);
-      }
+      if (err) showFieldError(input, err.msg);
     });
   });
 
@@ -1971,6 +2282,14 @@ function liveValidateEducation() {
 
 function syncEditorData() {
   // -------------------------
+  // TITLE (NEW)
+  // -------------------------
+  const titleInput = document.querySelector('[data-field="cv.title"]');
+  if (titleInput) {
+    cvData.title = titleInput.value.trim();
+  }
+
+  // -------------------------
   // PROFILE
   // -------------------------
   const profile = cvData.cv_profile;
@@ -2053,7 +2372,8 @@ async function saveChanges() {
   // -----------------------------------------
   const errors = validateFullCV(cvData);
   if (errors.length > 0) {
-    showToast(errors[0], "error");
+    showToast(errors[0].msg, "error");
+    highlightEditorErrors(errors);
     return;
   }
 

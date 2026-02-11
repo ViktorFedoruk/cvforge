@@ -1534,3 +1534,22 @@ textarea {
     box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
   }
 }
+
+/* =========================================================
+   VALIDATION ERROR HIGHLIGHT — FINAL OVERRIDE
+========================================================= */
+
+.editor-section .has-error input,
+.editor-section .has-error textarea,
+.editor-section .has-error .field-input {
+    border-color: #e11d48 !important;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25) !important;
+    background: #fff !important;
+}
+
+.editor-section .error-msg {
+    color: #e11d48;
+    font-size: 13px;
+    margin-top: 6px;
+    padding-left: 2px;
+}

@@ -4,144 +4,385 @@
   <meta charset="UTF-8">
   <title>CVForge — Создай резюме за 5 минут</title>
 
-  <link rel="stylesheet" href="/css/header.css">
-  <link rel="stylesheet" href="/css/home.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVForge — Профессиональные резюме для карьерного роста</title>
+  <meta name="description" content="Создайте профессиональное резюме за 5 минут. Удобный конструктор, рекомендации, шаблоны и статистика просмотров.">
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/header.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 </head>
 
 <body>
+
+  <!-- HEADER -->
   <header class="global-header">
     <a href="/index.html" class="logo">>_ CVForge</a>
-
-    <div class="header-right" id="headerRight">
-      <!-- JS вставит кнопки -->
-    </div>
+    <div class="header-right" id="headerRight"></div>
   </header>
 
+  <!-- PRELOADER -->
   <div id="pageLoader" class="page-loader">
-    <div class="loader-circle"></div>
+    <div class="loader-wrapper">
+      <div class="loader-ring">
+        <div class="loader-circle"></div>
+      </div>
+      <div class="loader-text">CVForge</div>
+    </div>
   </div>
 
-  <!-- ГЛАВНЫЙ КОНТЕЙНЕР КОНТЕНТА -->
-  <div id="pageContent">
+  <!-- MAIN CONTENT -->
+  <main class="home">
 
     <!-- HERO -->
-    <section class="hero">
-      <div class="hero-glass">
-        <h1>Создай своё префессиональное резюме за 5 минут</h1>
-        <p class="hero-subtitle">
-          4 простых шага. Умные рекомендации. Минимум ввода — максимум результата.
-          CVForge помогает сформулировать опыт, даже если ты не знаешь, с чего начать.
-        </p>
+    <section class="home-hero">
+      <div class="home-container">
+        <div class="home-hero-grid">
 
-        <button class="cta-btn hero-cta" id="startBtn2">
-          Начать бесплатно
-          <i class="fas fa-arrow-right"></i>
-        </button>
+          <div class="home-hero-content">
+            <h1 class="home-hero-title">
+              <span class="home-gradient">Профессиональное резюме</span>
+              <span>за 5 минут</span>
+            </h1>
+
+            <p class="home-hero-subtitle">
+              Удобный конструктор, рекомендации по формулировкам и современные шаблоны.  
+              Создайте резюме, которое выделяет вас среди кандидатов.
+            </p>
+
+            <div class="home-hero-actions">
+              <button class="home-cta-btn" id="startBtn">
+                <span>Создать резюме бесплатно</span>
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+              <div class="home-hero-visual">
+                <div class="home-resume-preview">
+
+                  <div class="home-preview-header">
+                    <div class="home-preview-photo">👨‍💼</div>
+
+                    <div class="home-preview-section">
+                      <div class="home-preview-line wide"></div>
+                      <div class="home-preview-line mid"></div>
+                      <div class="home-preview-line small short"></div>
+                      <div class="home-preview-line small mid"></div>
+                    </div>
+                  </div>
+
+                  <div class="home-preview-columns">
+
+                    <div class="home-preview-section">
+                      <div class="home-preview-line wide"></div>
+                      <div class="home-preview-line mid"></div>
+                      <div class="home-preview-line short"></div>
+
+                      <div class="home-preview-divider"></div>
+
+                      <div class="home-preview-line wide"></div>
+                      <div class="home-preview-line mid"></div>
+                      <div class="home-preview-line small wide"></div>
+                      <div class="home-preview-line small mid"></div>
+                      <div class="home-preview-line small short"></div>
+                    </div>
+
+                    <div class="home-preview-section">
+                      <div class="home-preview-line wide"></div>
+                      <div class="home-preview-line mid"></div>
+                      <div class="home-preview-line short"></div>
+
+                      <div class="home-preview-divider"></div>
+
+                      <div class="home-preview-line wide"></div>
+                      <div class="home-preview-line mid"></div>
+                      <div class="home-preview-line small wide"></div>
+                      <div class="home-preview-line small mid"></div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="home-floating el1">⭐</div>
+                <div class="home-floating el2">💼</div>
+              </div>
+
+        </div>
       </div>
     </section>
 
     <!-- FEATURES -->
-    <section class="features">
-      <h2>Почему CVForge?</h2>
+    <section class="home-features">
+      <div class="home-container">
 
-      <div class="features-grid">
-
-        <div class="feature-card">
-          <i class="fas fa-bolt"></i>
-          <h3>Быстро</h3>
-          <p>Заполнение занимает 5 минут. Мы подскажем формулировки.</p>
+        <div class="home-section-header">
+          <h2>Почему CVForge?</h2>
+          <p>Инструменты, которые усиливают ваш профессиональный профиль</p>
         </div>
 
-        <div class="feature-card">
-          <i class="fas fa-wand-magic-sparkles"></i>
-          <h3>Умно</h3>
-          <p>Система анализирует твой опыт и предлагает улучшения.</p>
-        </div>
+        <div class="home-features-list">
 
-        <div class="feature-card">
-          <i class="fas fa-layer-group"></i>
-          <h3>Просто</h3>
-          <p>Никаких сложных форм. Только то, что действительно важно.</p>
-        </div>
+          <!-- 1 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-bolt"></i></span>
+              Быстрое создание
+            </h3>
+            <p>Получите своё первое профессиональное резюме потратив 5 минут.</p>
+          </div>
 
-        <div class="feature-card">
-          <i class="fas fa-check-circle"></i>
-          <h3>Эффективно</h3>
-          <p>Резюме, которое выделяет тебя среди кандидатов.</p>
-        </div>
+          <!-- 2 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-wand-magic-sparkles"></i></span>
+              Мастер из 4 шагов
+            </h3>
+            <p>Пошаговый процесс помогает собрать сильное резюме без лишних усилий.</p>
+          </div>
 
+          <!-- 3 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-lightbulb"></i></span>
+              Система рекомендаций
+            </h3>
+            <p>Подсказываем, как улучшить формулировки и выделить достижения.</p>
+          </div>
+
+          <!-- 4 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-pen-to-square"></i></span>
+              Режим редактирования
+            </h3>
+            <p>Быстро вносите правки и обновляйте резюме в любое время.</p>
+          </div>
+
+          <!-- 5 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-database"></i></span>
+              Надёжное хранение
+            </h3>
+            <p>Ваше резюме всегда доступно, синхронизировано и не потеряется.</p>
+          </div>
+
+          <!-- 6 -->
+          <div class="home-feature-row">
+            <h3>
+              <span class="home-feature-icon-inline"><i class="fas fa-share-nodes"></i></span>
+              Умный шаринг
+            </h3>
+            <p>Делитесь резюме по ссылке и управляйте доступом в один клик.</p>
+          </div>
+
+        </div>
       </div>
     </section>
 
     <!-- STEPS -->
-    <section class="steps">
-      <h2>Всего 4 шага до готового резюме</h2>
+    <section class="home-steps">
+      <div class="home-container">
 
-      <div class="steps-grid">
-
-        <div class="step">
-          <span class="step-number">1</span>
-          <h3>Профиль</h3>
-          <p>Имя, должность, контакты — всё просто и понятно.</p>
+        <div class="home-section-header">
+          <h2>4 шага к идеальному резюме</h2>
+          <p>Продуманный процесс, который экономит ваше время и усиливает впечатление</p>
         </div>
 
-        <div class="step">
-          <span class="step-number">2</span>
-          <h3>Опыт</h3>
-          <p>Умные подсказки помогают описать результаты, а не обязанности.</p>
-        </div>
+        <div class="home-steps-timeline">
 
-        <div class="step">
-          <span class="step-number">3</span>
-          <h3>Навыки и образование</h3>
-          <p>Добавляй только важное — мы подскажем, что выделит тебя.</p>
-        </div>
+          <!-- Шаг 1 -->
+          <div class="home-step-item">
 
-        <div class="step">
-          <span class="step-number">4</span>
-          <h3>Готово</h3>
-          <p>Получай аккуратное резюме, которое работает.</p>
+            <div class="home-step-number">
+              <span>01</span>
+            </div>
+
+            <div class="home-step-content">
+
+              <h3>
+                <span class="home-step-icon-inline">
+                  <i class="fas fa-id-card"></i>
+                </span>
+                Создайте профиль
+              </h3>
+
+              <p>Основная информация, контакты и фото — всё за пару минут.</p>
+              <p class="home-step-extra">Профиль автоматически адаптируется под вашу сферу.</p>
+
+              <div class="home-step-highlight">
+                <i class="fas fa-bolt"></i>
+                <span>Первое впечатление формируется за 6 секунд</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Шаг 2 -->
+          <div class="home-step-item">
+
+            <div class="home-step-number">
+              <span>02</span>
+            </div>
+
+            <div class="home-step-content">
+
+              <h3>
+                <span class="home-step-icon-inline">
+                  <i class="fas fa-briefcase"></i>
+                </span>
+                Опишите опыт
+              </h3>
+
+              <p>Добавьте ключевые позиции, проекты и измеримые результаты.</p>
+              <p class="home-step-extra">Умные подсказки помогают сформулировать достижения.</p>
+
+              <div class="home-step-highlight">
+                <i class="fas fa-chart-line"></i>
+                <span>Конкретика повышает интерес рекрутера в 3 раза</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Шаг 3 -->
+          <div class="home-step-item">
+
+            <div class="home-step-number">
+              <span>03</span>
+            </div>
+
+            <div class="home-step-content">
+
+              <h3>
+                <span class="home-step-icon-inline">
+                  <i class="fas fa-sliders-h"></i>
+                </span>
+                Систематизируйте навыки
+              </h3>
+
+              <p>Разнесите компетенции по уровням владения.</p>
+              <p class="home-step-extra">Мы подскажем навыки, которые чаще всего ищут работодатели.</p>
+
+              <div class="home-step-highlight">
+                <i class="fas fa-search"></i>
+                <span>+85% к видимости в поиске рекрутеров</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Шаг 4 -->
+          <div class="home-step-item">
+
+            <div class="home-step-number">
+              <span>04</span>
+            </div>
+
+            <div class="home-step-content">
+
+              <h3>
+                <span class="home-step-icon-inline">
+                  <i class="fas fa-graduation-cap"></i>
+                </span>
+                Дополните образование
+              </h3>
+
+              <p>Добавьте образование, курсы и сертификаты, которые формируют вашу профессиональную базу.</p>
+              <p class="home-step-extra">Мы аккуратно оформим блок, сохранив баланс и читаемость.</p>
+
+              <div class="home-step-highlight">
+                <i class="fas fa-check-double"></i>
+                <span>Завершённый профиль выглядит убедительнее и профессиональнее</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="home-cta-final">
+      <div class="home-container">
+
+        <div class="home-cta-inner">
+
+          <h2 class="home-cta-title">
+            Начните карьерный рост сегодня
+          </h2>
+
+          <p class="home-cta-subtitle">
+            Тысячи специалистов уже создали резюме с CVForge — теперь ваша очередь.
+          </p>
+
+          <div class="home-cta-chips">
+            <div class="home-cta-chip"><i class="fas fa-gift"></i><span>Бесплатно</span></div>
+            <div class="home-cta-chip"><i class="fas fa-sliders-h"></i><span>Гибко</span></div>
+            <div class="home-cta-chip"><i class="fas fa-bolt"></i><span>Быстро</span></div>
+            <div class="home-cta-chip"><i class="fas fa-shield-alt"></i><span>Безопасно</span></div>
+          </div>
+
+          <button class="home-cta-btn home-cta-large" id="startBtn2">
+            <span>Начать бесплатно</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <p class="home-cta-note">
+            <i class="fas fa-shield-alt"></i>
+            Ваши данные защищены. Мы не публикуем резюме без вашего согласия.
+          </p>
+
         </div>
 
       </div>
     </section>
 
-    <!-- CTA FINAL -->
-    <section class="cta-final">
-      <div class="cta-glass">
-        <h2>Готов создать резюме, которое работает?</h2>
-        <button class="cta-btn cta-large" id="startBtn2">Начать бесплатно</button>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="home-footer">
+      <div class="home-footer-bottom">
+        <p>© 2026 CVForge. Все права защищены.</p>
+
+        <div class="home-footer-links">
+          <a href="#">Конфиденциальность</a>
+          <a href="#">Условия</a>
+          <a href="#">Cookies</a>
+        </div>
       </div>
-    </section>
+  </footer>
 
-  </div> <!-- /pageContent -->
-
-
-  <!-- Глобальный хэдер + лоадер -->
+  <!-- JS -->
   <script type="module">
-    import { initGlobalHeader } from "/js/header.js";
+    import { initGlobalHeader, hidePageLoader, navigateWithLoader } from "/js/header.js";
+    import { supabase } from "/js/supabase.js";
 
-    // Ждём, пока DOM будет готов
-    document.addEventListener("DOMContentLoaded", () => {
-      initGlobalHeader();
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initGlobalHeader();
+      hidePageLoader();
+
+      document.querySelectorAll("#startBtn, #startBtn2").forEach(btn => {
+        btn.onclick = async () => {
+          const { data } = await supabase.auth.getSession();
+          const user = data?.session?.user;
+          navigateWithLoader(user ? "/dashboard.html" : "/auth/index.html");
+        };
+      });
     });
   </script>
-
-
-<script type="module">
-  import { supabase } from "/js/supabase.js";
-
-  document.querySelectorAll("#startBtn2").forEach(btn => {
-    btn.onclick = async () => {
-      const { data } = await supabase.auth.getSession();
-      const user = data?.session?.user;
-
-      window.location.href = user ? "/dashboard.html" : "/auth/index.html";
-    };
-  });
-</script>
 
 </body>
 </html>

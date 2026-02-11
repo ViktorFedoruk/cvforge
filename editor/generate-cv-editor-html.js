@@ -68,38 +68,42 @@ export function generateCVEditorHTML(data) {
         <div class="editor-userinfo-block">
             <div>
             <label>Название резюме<span class="required">*</span></label>
-            <input type="text" data-field="cv.title" value="${cv.title || ""}">
+            <input type="text" placeholder="Введите название резюме" data-field="cv.title" value="${cv.title || ""}">
+            <div class="error-msg"></div>
             </div>
 
             <div>
             <label>Полное имя<span class="required">*</span></label>
             <input type="text" placeholder="Имя и фамилия" data-field="cv_profile.full_name" value="${cv_profile.full_name || ""}">
+            <div class="error-msg"></div>
             </div>
 
             <div>
             <label>Желаемая позиция<span class="required">*</span></label>
-            <div class="position-input-wrapper">
-                <input 
-                type="text" placeholder="Например: QA Engineer"
-                data-field="cv_profile.position"
-                data-job-title-input
-                value="${cv_profile.position || ""}"
-                >
-                <div class="position-suggestions"></div>
-            </div>
+                <div class="position-input-wrapper">
+                    <input 
+                    type="text" placeholder="Например: QA Engineer"
+                    data-field="cv_profile.position"
+                    data-job-title-input
+                    value="${cv_profile.position || ""}"
+                    >
+                    <div class="position-suggestions"></div>
+                </div>
+            <div class="error-msg"></div>
             </div>
 
             <div>
             <label>Локация</label>
-            <div class="city-input-wrapper">
-                <input 
-                type="text" placeholder="Город, страна"
-                data-field="cv_profile.location"
-                data-city-input
-                value="${cv_profile.location || ""}"
-                >
-                <div class="city-dropdown-container"></div>
-            </div>
+                <div class="city-input-wrapper">
+                    <input 
+                    type="text" placeholder="Город, страна"
+                    data-field="cv_profile.location"
+                    data-city-input
+                    value="${cv_profile.location || ""}"
+                    >
+                    <div class="city-dropdown-container"></div>
+                </div>
+            <div class="error-msg"></div>
             </div>
         </div>
 
@@ -110,17 +114,17 @@ export function generateCVEditorHTML(data) {
 
       <h3>Контакты</h3>
       <div class="editor-grid-2">
-        <div><label>Email</label><input type="text" placeholder="you@example.com" data-field="cv_profile.email" value="${cv_profile.email || ""}"></div>
-        <div><label>Телефон</label><input type="text" placeholder="+375 ..." data-field="cv_profile.phone" value="${cv_profile.phone || ""}"></div>
-        <div><label>LinkedIn</label><input type="text" placeholder="https://linkedin.com/in/..." data-field="cv_profile.linkedin" value="${cv_profile.linkedin || ""}"></div>
-        <div><label>Telegram</label><input type="text" placeholder="Telegram" data-field="cv_profile.telegram" value="${cv_profile.telegram || ""}"></div>
-        <div><label>GitHub</label><input type="text" placeholder="GitHub" data-field="cv_profile.github" value="${cv_profile.github || ""}"></div>
-        <div><label>Website</label><input type="text" placeholder="Website" data-field="cv_profile.website" value="${cv_profile.website || ""}"></div>
-        <div><label>Twitter</label><input type="text" placeholder="Twitter" data-field="cv_profile.twitter" value="${cv_profile.twitter || ""}"></div>
-        <div><label>Instagram</label><input type="text" placeholder="Instagram" data-field="cv_profile.instagram" value="${cv_profile.instagram || ""}"></div>
-        <div><label>Facebook</label><input type="text" placeholder="Facebook" data-field="cv_profile.facebook" value="${cv_profile.facebook || ""}"></div>
-        <div><label>Behance</label><input type="text" placeholder="Behance" data-field="cv_profile.behance" value="${cv_profile.behance || ""}"></div>
-        <div><label>Dribbble</label><input type="text" placeholder="Dribbble" data-field="cv_profile.dribbble" value="${cv_profile.dribbble || ""}"></div>
+        <div><label>Email</label><input type="text" placeholder="you@example.com" data-field="cv_profile.email" value="${cv_profile.email || ""}"><div class="error-msg"></div></div>
+        <div><label>Телефон</label><input type="text" placeholder="+375 ..." data-field="cv_profile.phone" value="${cv_profile.phone || ""}"><div class="error-msg"></div></div>
+        <div><label>LinkedIn</label><input type="text" placeholder="https://linkedin.com/in/..." data-field="cv_profile.linkedin" value="${cv_profile.linkedin || ""}"><div class="error-msg"></div></div>
+        <div><label>Telegram</label><input type="text" placeholder="Telegram" data-field="cv_profile.telegram" value="${cv_profile.telegram || ""}"><div class="error-msg"></div></div>
+        <div><label>GitHub</label><input type="text" placeholder="GitHub" data-field="cv_profile.github" value="${cv_profile.github || ""}"><div class="error-msg"></div></div>
+        <div><label>Website</label><input type="text" placeholder="Website" data-field="cv_profile.website" value="${cv_profile.website || ""}"><div class="error-msg"></div></div>
+        <div><label>Twitter</label><input type="text" placeholder="Twitter" data-field="cv_profile.twitter" value="${cv_profile.twitter || ""}"><div class="error-msg"></div></div>
+        <div><label>Instagram</label><input type="text" placeholder="Instagram" data-field="cv_profile.instagram" value="${cv_profile.instagram || ""}"><div class="error-msg"></div></div>
+        <div><label>Facebook</label><input type="text" placeholder="Facebook" data-field="cv_profile.facebook" value="${cv_profile.facebook || ""}"><div class="error-msg"></div></div>
+        <div><label>Behance</label><input type="text" placeholder="Behance" data-field="cv_profile.behance" value="${cv_profile.behance || ""}"><div class="error-msg"></div></div>
+        <div><label>Dribbble</label><input type="text" placeholder="Dribbble" data-field="cv_profile.dribbble" value="${cv_profile.dribbble || ""}"><div class="error-msg"></div></div>
       </div>
     </section>
 

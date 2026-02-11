@@ -1095,7 +1095,7 @@ body {
 .required {
   color: #dc2626;
   font-weight: 700;
-  margin-left: 4px;
+  margin-left: -4px;
 }
 
 .input-error {
@@ -1107,7 +1107,6 @@ body {
 .error-msg {
   color: #dc2626;
   font-size: 13px;
-  margin-top: 4px;
   display: none;
 }
 
