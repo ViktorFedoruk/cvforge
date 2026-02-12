@@ -123,21 +123,6 @@
   // OPTIMIZATION HELPERS
   // ================================
 
-  // ——— SHADOWS ———
-  function softenShadows(heavyElements, factor = 0.5) {
-    heavyElements.forEach(({ el, cs, area }) => {
-      if (cs.boxShadow === "none") return;
-      const localFactor = area > 400 * 400 ? factor * 0.4 : factor;
-      el.style.boxShadow = `0 2px 8px rgba(0,0,0,${0.06 * localFactor})`;
-    });
-  }
-
-  function removeShadows(heavyElements) {
-    heavyElements.forEach(({ el, cs }) => {
-      if (cs.boxShadow !== "none") el.style.boxShadow = "none";
-    });
-  }
-
   // ——— BLUR ———
   function softenBlur(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
@@ -163,13 +148,11 @@
   function softenBackdropFilter(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
       if (cs.backdropFilter === "none") return;
-      // mid: мягкое стекло, чуть плотнее фон
       el.style.backdropFilter = "blur(4px)";
       el.style.backgroundColor = "rgba(255,255,255,0.9)";
     });
   }
 
-  // стекло → белая панель
   function fallbackGlassToSolid(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
       const hasGlass =
@@ -188,13 +171,9 @@
 
   // ——— TRANSFORMS ———
   function softenTransforms(heavyElements) {
-    heavyElements.forEach(({ el, cs, area }) => {
+    heavyElements.forEach(({ el, cs }) => {
       if (cs.transform === "none") return;
-      if (cs.transform.includes("3d")) {
-        el.style.transform = "none";
-        return;
-      }
-      if (area > 400 * 400) el.style.transform = "none";
+      el.style.transform = "none";
     });
   }
 
@@ -205,13 +184,10 @@
   }
 
   // ——— ANIMATIONS ———
-  function softenAnimations(heavyElements, factor = 0.5) {
-    heavyElements.forEach(({ el, cs, area }) => {
+  function softenAnimations(heavyElements) {
+    heavyElements.forEach(({ el, cs }) => {
       if (cs.animationName === "none") return;
-      const dur = parseFloat(cs.animationDuration);
-      if (isNaN(dur) || dur === 0) return;
-      const localFactor = area > 400 * 400 ? factor * 0.4 : factor;
-      el.style.animationDuration = dur * localFactor + "s";
+      el.style.animationDuration = "2s"; // замедляем
     });
   }
 
@@ -220,6 +196,19 @@
       if (cs.animationName !== "none") el.style.animation = "none";
       if (cs.transitionDuration !== "0s") el.style.transition = "none";
     });
+  }
+
+  // ——— HOVER EFFECTS ———
+  function disableHoverLift() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .gpu-low *:hover,
+      .gpu-verylow *:hover {
+        transform: none !important;
+        box-shadow: inherit !important;
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   // ================================
@@ -231,17 +220,14 @@
     if (level === "gpu-high") return;
 
     if (level === "gpu-mid") {
-      softenShadows(heavyElements, 0.5);
       softenBlur(heavyElements);
-      softenBackdropFilter(heavyElements); // blur(4px) + 0.65
+      softenBackdropFilter(heavyElements);
       softenTransforms(heavyElements);
       softenAnimations(heavyElements, 0.5);
     }
 
     if (level === "gpu-low") {
-      softenShadows(heavyElements, 0.3);
       softenBlur(heavyElements);
-      // плотное стекло: маленький blur, ещё плотнее фон
       heavyElements.forEach(({ el, cs }) => {
         if (cs.backdropFilter !== "none") {
           el.style.backdropFilter = "blur(1px)";
@@ -249,15 +235,16 @@
         }
       });
       softenTransforms(heavyElements);
+      disableHoverLift();
       softenAnimations(heavyElements, 0.3);
     }
 
     if (level === "gpu-verylow") {
-      removeShadows(heavyElements);
       removeBlur(heavyElements);
-      fallbackGlassToSolid(heavyElements); // стекло → белая панель
+      fallbackGlassToSolid(heavyElements);
       removeTransforms(heavyElements);
       removeAnimations(heavyElements);
+      disableHoverLift();
     }
   }
 
