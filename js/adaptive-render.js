@@ -199,10 +199,11 @@
   }
 
   // ——— GRADIENT SHIFT / BACKGROUND ANIMATIONS ———
-  function applyGradientShiftDegradation() {
+  function applyGradientShiftDegradation(level) {
     const style = document.createElement("style");
 
     style.innerHTML = `
+      /* MID — замедляем */
       .gpu-mid .gradientshift,
       .gpu-mid .bg-animated,
       .gpu-mid .bg-shift,
@@ -210,6 +211,7 @@
         animation-duration: 12s !important;
       }
 
+      /* LOW — почти статично */
       .gpu-low .gradientshift,
       .gpu-low .bg-animated,
       .gpu-low .bg-shift,
@@ -217,6 +219,7 @@
         animation-duration: 20s !important;
       }
 
+      /* VERYLOW — отключаем полностью */
       .gpu-verylow .gradientshift,
       .gpu-verylow .bg-animated,
       .gpu-verylow .bg-shift,
@@ -242,25 +245,13 @@
     document.head.appendChild(style);
   }
 
-  // ——— TRANSITIONS ONLY ON VERYLOW ———
-  function disableAllTransitionsVeryLow() {
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .gpu-verylow * {
-        transition: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
   // ================================
   // APPLY OPTIMIZATION
   // ================================
   function applyOptimization(level, heavyElements) {
     document.documentElement.classList.add(level);
 
-    applyGradientShiftDegradation();
-    disableAllTransitionsVeryLow();
+    applyGradientShiftDegradation(level);
 
     if (level === "gpu-high") return;
 
