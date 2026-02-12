@@ -130,9 +130,38 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 1040px;
+  width: 240px;
   height: auto;
   transform-origin: top left;
+  box-shadow: none !important;
+  filter: none !important;
+  pointer-events: none !important;
+}
+
+.cv-card-preview-inner * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  transition: none !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+.cv-card-preview-inner *:hover {
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Добавляем бордеры только крупным элементам */
+.cv-card-preview-inner .cv-profile,
+.cv-card-preview-inner .cv-profile-avatar,
+.cv-card-preview-inner .cv-exp-item,
+.cv-card-preview-inner .cv-skill-col {
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  outline: 3px solid rgba(0,0,0,0.03) !important;
+  outline-offset: 1px;
 }
 
 /* =========================================================

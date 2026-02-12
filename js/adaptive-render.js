@@ -97,9 +97,6 @@
       }
       if (cs.animationName !== "none") score += 6;
 
-      // Убираем border-radius из анализа — больше не трогаем
-      // if (parseFloat(cs.borderRadius) > 20) score += 2;
-
       if (area > 400 * 400) score *= 2;
       else if (area > 250 * 250) score *= 1.5;
 
@@ -125,6 +122,8 @@
   // ================================
   // OPTIMIZATION HELPERS
   // ================================
+
+  // ——— SHADOWS ———
   function softenShadows(heavyElements, factor = 0.5) {
     heavyElements.forEach(({ el, cs, area }) => {
       if (cs.boxShadow === "none") return;
@@ -139,6 +138,7 @@
     });
   }
 
+  // ——— BLUR ———
   function softenBlur(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
       if (!cs.filter.includes("blur")) return;
@@ -146,7 +146,10 @@
       if (!match) return;
       const raw = parseFloat(match[1]);
       const reduced = Math.max(0, Math.min(raw * 0.3, 3));
-      el.style.filter = reduced === 0 ? "none" : cs.filter.replace(/blur\([^)]+\)/, `blur(${reduced}px)`);
+      el.style.filter =
+        reduced === 0
+          ? "none"
+          : cs.filter.replace(/blur\([^)]+\)/, `blur(${reduced}px)`);
     });
   }
 
@@ -156,23 +159,34 @@
     });
   }
 
+  // ——— BACKDROP FILTER / GLASS ———
   function softenBackdropFilter(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
       if (cs.backdropFilter === "none") return;
-      el.style.backdropFilter = "none";
-      el.style.backgroundColor = "rgba(255,255,255,0.85)";
+      // mid: мягкое стекло, чуть плотнее фон
+      el.style.backdropFilter = "blur(4px)";
+      el.style.backgroundColor = "rgba(255,255,255,0.9)";
     });
   }
 
-  function removeBackdropFilter(heavyElements) {
+  // стекло → белая панель
+  function fallbackGlassToSolid(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
-      if (cs.backdropFilter !== "none") {
-        el.style.backdropFilter = "none";
-        el.style.backgroundColor = "rgba(255,255,255,0.9)";
-      }
+      const hasGlass =
+        cs.backdropFilter !== "none" || cs.filter.includes("blur");
+
+      if (!hasGlass) return;
+
+      el.style.backdropFilter = "none";
+      el.style.filter = "none";
+
+      el.style.backgroundColor = "#ffffff";
+      el.style.border = "1px solid rgba(0,0,0,0.08)";
+      el.style.boxShadow = "0 0 1px rgba(0,0,0,0.15)";
     });
   }
 
+  // ——— TRANSFORMS ———
   function softenTransforms(heavyElements) {
     heavyElements.forEach(({ el, cs, area }) => {
       if (cs.transform === "none") return;
@@ -190,6 +204,7 @@
     });
   }
 
+  // ——— ANIMATIONS ———
   function softenAnimations(heavyElements, factor = 0.5) {
     heavyElements.forEach(({ el, cs, area }) => {
       if (cs.animationName === "none") return;
@@ -216,25 +231,31 @@
     if (level === "gpu-high") return;
 
     if (level === "gpu-mid") {
-      softenShadows(heavyElements, 0.6);
+      softenShadows(heavyElements, 0.5);
       softenBlur(heavyElements);
-      softenBackdropFilter(heavyElements);
+      softenBackdropFilter(heavyElements); // blur(4px) + 0.65
       softenTransforms(heavyElements);
-      softenAnimations(heavyElements, 0.6);
+      softenAnimations(heavyElements, 0.5);
     }
 
     if (level === "gpu-low") {
-      softenShadows(heavyElements, 0.4);
+      softenShadows(heavyElements, 0.3);
       softenBlur(heavyElements);
-      removeBackdropFilter(heavyElements);
+      // плотное стекло: маленький blur, ещё плотнее фон
+      heavyElements.forEach(({ el, cs }) => {
+        if (cs.backdropFilter !== "none") {
+          el.style.backdropFilter = "blur(1px)";
+          el.style.backgroundColor = "rgba(255,255,255,0.75)";
+        }
+      });
       softenTransforms(heavyElements);
-      softenAnimations(heavyElements, 0.4);
+      softenAnimations(heavyElements, 0.3);
     }
 
     if (level === "gpu-verylow") {
       removeShadows(heavyElements);
       removeBlur(heavyElements);
-      removeBackdropFilter(heavyElements);
+      fallbackGlassToSolid(heavyElements); // стекло → белая панель
       removeTransforms(heavyElements);
       removeAnimations(heavyElements);
     }
