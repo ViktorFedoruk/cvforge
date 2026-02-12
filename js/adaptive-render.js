@@ -187,7 +187,7 @@
   function softenAnimations(heavyElements) {
     heavyElements.forEach(({ el, cs }) => {
       if (cs.animationName === "none") return;
-      el.style.animationDuration = "2s"; // замедляем
+      el.style.animationDuration = "2s";
     });
   }
 
@@ -196,6 +196,37 @@
       if (cs.animationName !== "none") el.style.animation = "none";
       if (cs.transitionDuration !== "0s") el.style.transition = "none";
     });
+  }
+
+  // ——— GRADIENT SHIFT / BACKGROUND ANIMATIONS ———
+  function applyGradientShiftDegradation() {
+    const style = document.createElement("style");
+
+    style.innerHTML = `
+      .gpu-mid .gradientshift,
+      .gpu-mid .bg-animated,
+      .gpu-mid .bg-shift,
+      .gpu-mid .animated-gradient {
+        animation-duration: 12s !important;
+      }
+
+      .gpu-low .gradientshift,
+      .gpu-low .bg-animated,
+      .gpu-low .bg-shift,
+      .gpu-low .animated-gradient {
+        animation-duration: 20s !important;
+      }
+
+      .gpu-verylow .gradientshift,
+      .gpu-verylow .bg-animated,
+      .gpu-verylow .bg-shift,
+      .gpu-verylow .animated-gradient {
+        animation: none !important;
+        background-position: center !important;
+      }
+    `;
+
+    document.head.appendChild(style);
   }
 
   // ——— HOVER EFFECTS ———
@@ -211,11 +242,25 @@
     document.head.appendChild(style);
   }
 
+  // ——— TRANSITIONS ONLY ON VERYLOW ———
+  function disableAllTransitionsVeryLow() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .gpu-verylow * {
+        transition: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   // ================================
   // APPLY OPTIMIZATION
   // ================================
   function applyOptimization(level, heavyElements) {
     document.documentElement.classList.add(level);
+
+    applyGradientShiftDegradation();
+    disableAllTransitionsVeryLow();
 
     if (level === "gpu-high") return;
 
@@ -223,7 +268,7 @@
       softenBlur(heavyElements);
       softenBackdropFilter(heavyElements);
       softenTransforms(heavyElements);
-      softenAnimations(heavyElements, 0.5);
+      softenAnimations(heavyElements);
     }
 
     if (level === "gpu-low") {
@@ -236,7 +281,7 @@
       });
       softenTransforms(heavyElements);
       disableHoverLift();
-      softenAnimations(heavyElements, 0.3);
+      softenAnimations(heavyElements);
     }
 
     if (level === "gpu-verylow") {
