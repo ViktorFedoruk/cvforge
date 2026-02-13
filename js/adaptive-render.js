@@ -1,5 +1,5 @@
 (function () {
-  const CACHE_KEY = "__cvforge_gpu_level_v4";
+  const CACHE_KEY = "__cvforge_gpu_level_v6";
   const CACHE_TTL = 1000 * 60 * 60 * 24; // 24 часа
 
   // ================================
@@ -199,11 +199,10 @@
   }
 
   // ——— GRADIENT SHIFT / BACKGROUND ANIMATIONS ———
-  function applyGradientShiftDegradation(level) {
+  function injectGlobalDegradationStyles() {
     const style = document.createElement("style");
-
     style.innerHTML = `
-      /* MID — замедляем */
+      /* Глобальная деградация градиентов по пресетам */
       .gpu-mid .gradientshift,
       .gpu-mid .bg-animated,
       .gpu-mid .bg-shift,
@@ -211,7 +210,6 @@
         animation-duration: 12s !important;
       }
 
-      /* LOW — почти статично */
       .gpu-low .gradientshift,
       .gpu-low .bg-animated,
       .gpu-low .bg-shift,
@@ -219,7 +217,6 @@
         animation-duration: 20s !important;
       }
 
-      /* VERYLOW — отключаем полностью */
       .gpu-verylow .gradientshift,
       .gpu-verylow .bg-animated,
       .gpu-verylow .bg-shift,
@@ -227,8 +224,18 @@
         animation: none !important;
         background-position: center !important;
       }
-    `;
 
+      /* Глобальное отключение тяжёлых эффектов для offscreen-блоков */
+      .vp-offscreen,
+      .vp-offscreen * {
+        animation: none !important;
+        transition: none !important;
+        box-shadow: none !important;
+        filter: none !important;
+        backdrop-filter: none !important;
+        transform: none !important;
+      }
+    `;
     document.head.appendChild(style);
   }
 
@@ -245,13 +252,94 @@
     document.head.appendChild(style);
   }
 
+  // ——— GLOBAL ANIMATIONS / SHADOWS / BLUR FOR LOW PRESETS ———
+  function disableAnimationsForLowPreset() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .gpu-low *, .gpu-verylow * {
+        animation: none !important;
+        transition: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function disableShadowsForLowPreset() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .gpu-low *, .gpu-verylow * {
+        box-shadow: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function disableBlurForVeryLow() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .gpu-verylow * {
+        backdrop-filter: none !important;
+        filter: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // ================================
+  // VIEWPORT VIRTUALIZATION (АКТИВНЫЙ РЕНДЕР ТОЛЬКО ВО ВЬЮПОРТЕ)
+  // ================================
+  function enableViewportVirtualization(groups, margin = 300) {
+    const blocks = [];
+
+    groups.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        blocks.push(el);
+      });
+    });
+
+    if (!blocks.length) return;
+
+    function update() {
+      const vh = window.innerHeight;
+
+      blocks.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const visible =
+          rect.bottom > -margin && rect.top < vh + margin;
+
+        if (visible) {
+          if (el.classList.contains("vp-offscreen")) {
+            el.classList.remove("vp-offscreen");
+          }
+          el.style.visibility = "visible";
+          el.style.opacity = "1";
+        } else {
+          if (!el.classList.contains("vp-offscreen")) {
+            el.classList.add("vp-offscreen");
+          }
+          el.style.visibility = "hidden";
+          el.style.opacity = "0";
+        }
+      });
+    }
+
+    update();
+    window.addEventListener("scroll", () => requestAnimationFrame(update));
+    window.addEventListener("resize", () => requestAnimationFrame(update));
+  }
+
   // ================================
   // APPLY OPTIMIZATION
   // ================================
   function applyOptimization(level, heavyElements) {
-    document.documentElement.classList.add(level);
+    const root = document.documentElement;
+    root.classList.remove("gpu-high", "gpu-mid", "gpu-low", "gpu-verylow");
+    root.classList.add(level);
 
-    applyGradientShiftDegradation(level);
+    injectGlobalDegradationStyles();
+    disableBlurForVeryLow();
+    disableShadowsForLowPreset();
+    disableAnimationsForLowPreset();
 
     if (level === "gpu-high") return;
 
@@ -285,6 +373,69 @@
   }
 
   // ================================
+  // ADAPTIVE PRESET FALLBACK (FPS < 40 > 3s)
+  // ================================
+  function startAdaptivePresetFallback() {
+    let lastFrames = 0;
+    let lastTime = performance.now();
+    let lowFpsSeconds = 0;
+    let fallbackActive = true;
+
+    function loop() {
+      const now = performance.now();
+      lastFrames++;
+
+      if (now - lastTime >= 1000) {
+        const fps = lastFrames;
+        lastFrames = 0;
+        lastTime = now;
+
+        if (fps < 40) {
+          lowFpsSeconds++;
+        } else {
+          lowFpsSeconds = 0;
+        }
+
+        if (fallbackActive && lowFpsSeconds >= 3) {
+          const changed = downgradePreset();
+          if (!changed) {
+            fallbackActive = false; // уже gpu-verylow
+          }
+          lowFpsSeconds = 0;
+        }
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  function downgradePreset() {
+    const root = document.documentElement;
+
+    if (root.classList.contains("gpu-high")) {
+      root.classList.remove("gpu-high");
+      root.classList.add("gpu-mid");
+      return true;
+    }
+
+    if (root.classList.contains("gpu-mid")) {
+      root.classList.remove("gpu-mid");
+      root.classList.add("gpu-low");
+      return true;
+    }
+
+    if (root.classList.contains("gpu-low")) {
+      root.classList.remove("gpu-low");
+      root.classList.add("gpu-verylow");
+      return true;
+    }
+
+    return false;
+  }
+
+  // ================================
   // MAIN
   // ================================
   async function init() {
@@ -292,8 +443,26 @@
     const elements = Array.from(document.querySelectorAll("*"));
     const { heavyScore, heavyElements } = analyzeDOM(elements);
 
+    // Включаем виртуализацию крупных блоков:
+    // — лендинг
+    // — мастер
+    // — просмотр резюме
+    enableViewportVirtualization([
+      ".home-step-content",
+      ".home-cta-final",
+      ".home-hero-content",
+      ".home-resume-preview",
+      ".wizard-wrapper",
+      ".wizard-step",
+      ".cv-section",
+      ".cv-page",
+      ".experience-item",
+      ".education-item"
+    ]);
+
     if (cached) {
       applyOptimization(cached, heavyElements);
+      startAdaptivePresetFallback();
       return;
     }
 
@@ -302,6 +471,7 @@
 
     setCachedLevel(level);
     applyOptimization(level, heavyElements);
+    startAdaptivePresetFallback();
   }
 
   if (document.readyState === "loading") {
