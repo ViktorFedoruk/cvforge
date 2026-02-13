@@ -587,9 +587,11 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: linear-gradient(90deg, #4f46e5, #06b6d4);
   border-radius: 28px 28px 0 0;
+  margin: 0 15px;
+  top: 1px;
 }
 
 /* =========================================================
@@ -651,33 +653,37 @@ body {
 ========================================================= */
 
 .home-step-highlight {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
-  padding: 12px 20px;
 
-  background: rgba(248,250,252,0.85);
-  border-radius: 16px;
-  border: 1px solid rgba(226,232,240,0.6);
+  padding: 0;
+  margin-top: 16px;
+
+  border-left: 3px solid #10b981;
+  padding-left: 12px;
 
   font-size: 14px;
   font-weight: 500;
   color: #334155;
 
-  margin-top: 16px;
-  transition: all 0.3s ease;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: none;
 }
 
 .home-step-highlight i {
   color: #10b981;
   font-size: 16px;
+  margin-top: 2px;
 }
 
 .home-step-content:hover .home-step-highlight {
-  background: rgba(248,250,252,0.95);
-  border-color: rgba(226,232,240,0.8);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  transform: none;
+  box-shadow: none;
+  background: none;
+  border-color: #10b981;
 }
 
 /* =========================================================

@@ -1,5 +1,5 @@
 (function () {
-  const CACHE_KEY = "__cvforge_gpu_level_v6";
+  const CACHE_KEY = "__cvforge_gpu_level_v7";
 
   // ============================================================
   //  UTILITIES
@@ -1024,6 +1024,71 @@ function virtualizeList(containerSelector, itemSelector, itemHeight = 220) {
   render();
 }
 
+function startAdaptivePresetFallback() {
+  let lastFrames = 0;
+  let lastTime = performance.now();
+  let lowFpsCounter = 0;
+  let idle = true;
+
+  // отслеживаем активность пользователя
+  ["scroll", "keydown", "mousemove", "touchstart"].forEach(evt => {
+    window.addEventListener(evt, () => {
+      idle = false;
+      setTimeout(() => idle = true, 1200);
+    });
+  });
+
+  function loop() {
+    const now = performance.now();
+    lastFrames++;
+
+    if (now - lastTime >= 1000) {
+      const fps = lastFrames;
+      lastFrames = 0;
+      lastTime = now;
+
+      // анализируем FPS только в состоянии покоя
+      if (idle && fps < 35) {
+        lowFpsCounter++;
+      } else {
+        lowFpsCounter = 0;
+      }
+
+      // если 5 секунд подряд FPS < 35 → понижаем пресет
+      if (lowFpsCounter >= 5) {
+        downgradePreset();
+        lowFpsCounter = 0;
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+}
+
+function downgradePreset() {
+  const root = document.documentElement;
+
+  if (root.classList.contains("gpu-high")) {
+    root.classList.remove("gpu-high");
+    root.classList.add("gpu-mid");
+    return;
+  }
+
+  if (root.classList.contains("gpu-mid")) {
+    root.classList.remove("gpu-mid");
+    root.classList.add("gpu-low");
+    return;
+  }
+
+  if (root.classList.contains("gpu-low")) {
+    root.classList.remove("gpu-low");
+    root.classList.add("gpu-verylow");
+    return;
+  }
+}
+
   // ============================================================
   //  APPLY OPTIMIZATION
   // ============================================================
@@ -1036,6 +1101,7 @@ function virtualizeList(containerSelector, itemSelector, itemHeight = 220) {
     applyEditorDegradation();
     enableViewportRendering();
     enableLazyHydrate();
+    startAdaptivePresetFallback();
 
     virtualizeList(".editor-list", ".editor-exp-block", 260);
     virtualizeList(".editor-list", ".editor-edu-block", 260);

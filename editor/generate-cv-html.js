@@ -331,7 +331,7 @@ export function generateCVHTML(state) {
 
             <div class="cv-edu-header">
               <span class="cv-edu-inst">${ed.institution || ""}</span>
-              —
+              
               <span class="cv-edu-degree">${ed.degree || ""}</span>
             </div>
 

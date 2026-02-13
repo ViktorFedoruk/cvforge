@@ -470,13 +470,17 @@ function validateStep(step) {
 
 function attachAutoCapitalize() {
   const inputs = document.querySelectorAll(
-    'input:not([type="email"]):not([type="tel"]):not([type="date"]):not([type="url"]), textarea'
+    'input:not([type="email"]):not([type="tel"]):not([type="date"]):not([data-contact]), textarea'
   );
 
   inputs.forEach((el) => {
     el.addEventListener("blur", () => {
       const v = el.value;
       if (!v) return;
+
+      // если это URL — не трогаем
+      if (v.startsWith("http") || v.startsWith("http://") || v.startsWith("https://")) return;
+
       el.value = v.charAt(0).toUpperCase() + v.slice(1);
     });
   });
