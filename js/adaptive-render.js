@@ -344,6 +344,7 @@
     if (level === "gpu-high") return;
 
     if (level === "gpu-mid") {
+      root.classList.add("perf-solid");
       softenBlur(heavyElements);
       softenBackdropFilter(heavyElements);
       softenTransforms(heavyElements);
@@ -351,6 +352,7 @@
     }
 
     if (level === "gpu-low") {
+        root.classList.add("perf-solid");
       softenBlur(heavyElements);
       heavyElements.forEach(({ el, cs }) => {
         if (cs.backdropFilter !== "none") {
@@ -364,6 +366,7 @@
     }
 
     if (level === "gpu-verylow") {
+      root.classList.add("perf-solid");
       removeBlur(heavyElements);
       fallbackGlassToSolid(heavyElements);
       removeTransforms(heavyElements);

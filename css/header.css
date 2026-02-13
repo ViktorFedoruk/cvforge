@@ -389,3 +389,83 @@ body {
   .loader-text { font-size: 18px; }
 }
 
+/* =========================================================
+   PERF MODE — SOLID COLORS (ONLY FOR gpu-low / gpu-verylow)
+========================================================= */
+
+.perf-solid body {
+  background: #f3f4f6 !important;
+  animation: none !important;
+  background-size: auto !important;
+  background-position: center !important;
+}
+
+/* Заголовки */
+.perf-solid .wizard-header-left h1 {
+  background: none !important;
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+}
+
+/* Прогресс-бар */
+.perf-solid .wizard-progress-bar {
+  background: #e5e7eb !important;
+}
+
+.perf-solid #wizardProgressFill {
+  background: #2563eb !important;
+  box-shadow: none !important;
+}
+
+/* Навигация шагов */
+.perf-solid .wizard-step.active .step-circle {
+  background: #2563eb !important;
+  box-shadow: none !important;
+}
+
+.perf-solid .wizard-step.completed .step-circle {
+  background: #16a34a !important;
+  box-shadow: none !important;
+}
+
+/* Панели */
+.perf-solid .wizard-panel::before {
+  background: #2563eb !important;
+}
+
+/* Кнопки */
+.perf-solid .btn-primary {
+  background: #2563eb !important;
+  box-shadow: none !important;
+}
+
+.perf-solid .btn-secondary {
+  background: #f3f4f6 !important;
+  box-shadow: none !important;
+}
+
+/* Стекло → обычный белый */
+.perf-solid .wizard-wrapper,
+.perf-solid .wizard-steps,
+.perf-solid .wizard-panel,
+.perf-solid .cv-root,
+.perf-solid .cv-editor-root {
+  backdrop-filter: none !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.06) !important;
+}
+
+/* Убираем hover-подъёмы */
+.perf-solid .wizard-step:hover,
+.perf-solid .card:hover,
+.perf-solid .btn-primary:hover,
+.perf-solid .btn-secondary:hover {
+  transform: none !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.06) !important;
+}
+
+/* Убираем все анимации */
+.perf-solid * {
+  animation: none !important;
+  transition: all 0.25s ease !important;
+}
