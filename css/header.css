@@ -388,3 +388,19 @@ body {
   .loader-circle { width: 32px; height: 32px; }
   .loader-text { font-size: 18px; }
 }
+
+
+
+.lazy-init {
+  will-change: opacity, transform, filter;
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(6px);
+  transition: opacity .35s ease, transform .35s ease, filter .35s ease;
+}
+
+.in-view {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
