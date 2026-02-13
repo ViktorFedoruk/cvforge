@@ -1028,15 +1028,7 @@ function startAdaptivePresetFallback() {
   let lastFrames = 0;
   let lastTime = performance.now();
   let lowFpsCounter = 0;
-  let idle = true;
-
-  // отслеживаем активность пользователя
-  ["scroll", "keydown", "mousemove", "touchstart"].forEach(evt => {
-    window.addEventListener(evt, () => {
-      idle = false;
-      setTimeout(() => idle = true, 1200);
-    });
-  });
+  let alreadyDowngraded = false;
 
   function loop() {
     const now = performance.now();
@@ -1047,17 +1039,17 @@ function startAdaptivePresetFallback() {
       lastFrames = 0;
       lastTime = now;
 
-      // анализируем FPS только в состоянии покоя
-      if (idle && fps < 35) {
+      // если FPS стабильно ниже 40 → считаем секунды
+      if (fps < 40) {
         lowFpsCounter++;
       } else {
         lowFpsCounter = 0;
       }
 
-      // если 5 секунд подряд FPS < 35 → понижаем пресет
-      if (lowFpsCounter >= 5) {
+      // если 3 секунды подряд FPS < 40 → понижаем пресет
+      if (!alreadyDowngraded && lowFpsCounter >= 3) {
         downgradePreset();
-        lowFpsCounter = 0;
+        alreadyDowngraded = true;
       }
     }
 
